@@ -7,7 +7,7 @@ import {
   type DisplayDataRow,
 } from "@/components/DisplayData/DisplayData.tsx";
 import { Page } from "@/components/Page.tsx";
-import { getAccessToken, usePrivy } from "@privy-io/react-auth";
+import { getAccessToken, useLinkAccount, usePrivy } from "@privy-io/react-auth";
 
 function getUserRows(user: User): DisplayDataRow[] {
   return [
@@ -30,7 +30,22 @@ export const InitDataPage: FC = () => {
 
   const [token, setToken] = useState<string | null>(null);
 
+  const [linkTelegramError, setLinkTelegramError] = useState<string | null>(
+    null
+  );
+  const [linkTelegramSuccess, setLinkTelegramSuccess] = useState<string | null>(
+    null
+  );
+
   const { authenticated, user, login, linkTelegram } = usePrivy();
+  const { linkTelegram: linkTelegramPrivy } = useLinkAccount({
+    onSuccess: () => {
+      setLinkTelegramSuccess("Telegram linked successfully");
+    },
+    onError: (error) => {
+      setLinkTelegramError(`Error linking Telegram: ${error}`);
+    },
+  });
 
   useEffect(() => {
     getAccessToken().then((token) => {
@@ -121,6 +136,9 @@ export const InitDataPage: FC = () => {
       <Button onClick={() => linkTelegram({ launchParams: { initDataRaw } })}>
         Link Telegram
       </Button>
+      <Button onClick={() => linkTelegramPrivy()}>Link Telegram Privy</Button>
+      {linkTelegramError && <div>{linkTelegramError}</div>}
+      {linkTelegramSuccess && <div>{linkTelegramSuccess}</div>}
       <div>{authenticated ? "true" : "false"}</div>
       <div>{user?.telegram?.telegramUserId}</div>
       <div>{user?.telegram?.username}</div>
