@@ -1,12 +1,29 @@
-import { useLaunchParams, miniApp, useSignal } from "@telegram-apps/sdk-react";
+import {
+  useLaunchParams,
+  miniApp,
+  useSignal,
+  initData,
+} from "@telegram-apps/sdk-react";
 import { AppRoot } from "@telegram-apps/telegram-ui";
 import { Navigate, Route, Routes, HashRouter } from "react-router-dom";
 
 import { routes } from "@/navigation/routes.tsx";
+import { useEffect } from "react";
+import { usePrivy } from "@privy-io/react-auth";
 
 export function App() {
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
+
+  const initDataRaw = useSignal(initData.raw);
+  const { linkTelegram } = usePrivy();
+
+  useEffect(() => {
+    if (initDataRaw) {
+      linkTelegram({ launchParams: { initDataRaw } });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initDataRaw]);
 
   return (
     <AppRoot
