@@ -1,6 +1,6 @@
 import { App } from "@/components/App.tsx";
 import { ErrorBoundary } from "@/components/ErrorBoundary.tsx";
-// import PrivyProvider from "@/core/privy/provider.tsx";
+import PrivyProvider from "@/core/privy/provider.tsx";
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -24,9 +24,9 @@ export function Root() {
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <div>VITE_TEST: {import.meta.env.VITE_TEST}</div>
       <div>VITE_PRIVY_APP_ID: {import.meta.env.VITE_PRIVY_APP_ID}</div>
-      {/* <PrivyProvider> */}
+      <PrivyProvider>
         <App />
-      {/* </PrivyProvider> */}
+      </PrivyProvider>
     </ErrorBoundary>
   );
 }
