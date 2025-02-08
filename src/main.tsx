@@ -12,8 +12,6 @@ import "./index.css";
 // Mock the environment in case, we are outside Telegram.
 import "./mockEnv.ts";
 
-import PrivyProvider from "@/core/privy/provider.tsx";
-
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 try {
@@ -22,9 +20,7 @@ try {
 
   root.render(
     <StrictMode>
-      <PrivyProvider>
-        <Root />
-      </PrivyProvider>
+      <Root />
     </StrictMode>
   );
 } catch (e) {
