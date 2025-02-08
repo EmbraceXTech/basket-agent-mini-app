@@ -14,16 +14,15 @@ import { usePrivy } from "@privy-io/react-auth";
 export function App() {
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
-
   const initDataRaw = useSignal(initData.raw);
+
   const { linkTelegram } = usePrivy();
 
   useEffect(() => {
     if (initDataRaw) {
       linkTelegram({ launchParams: { initDataRaw } });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initDataRaw]);
+  }, [initDataRaw, linkTelegram]);
 
   return (
     <AppRoot

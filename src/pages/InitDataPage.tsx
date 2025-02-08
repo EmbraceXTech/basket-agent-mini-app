@@ -118,15 +118,16 @@ export const InitDataPage: FC = () => {
       <Button onClick={() => login({ loginMethods: ["telegram"] })}>
         Login
       </Button>
-      <List>
-        {authenticated && (
-          <div>
-            <Text>Access Token: {token}</Text>
-            <Text>Telegram ID: {user?.telegram?.telegramUserId}</Text>
-            <Text>Telegram Username: {user?.telegram?.username}</Text>
-          </div>
-        )}
-      </List>
+      <div>{authenticated ? "true" : "false"}</div>
+      <div>{user?.telegram?.telegramUserId}</div>
+      <div>{user?.telegram?.username}</div>
+      {authenticated && (
+        <div>
+          <Text>Access Token: {token}</Text>
+          <Text>Telegram ID: {user?.telegram?.telegramUserId}</Text>
+          <Text>Telegram Username: {user?.telegram?.username}</Text>
+        </div>
+      )}
       <List>
         <DisplayData header={"Init Data"} rows={initDataRows} />
         {userRows && <DisplayData header={"User"} rows={userRows} />}
