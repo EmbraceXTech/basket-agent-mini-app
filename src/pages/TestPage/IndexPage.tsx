@@ -1,8 +1,8 @@
 import { Section, Cell, List } from "@telegram-apps/telegram-ui";
 import type { FC } from "react";
 
-import { Link } from "@/components/Link/Link.tsx";
-import { Page } from "@/components/Page.tsx";
+import { Link } from "@/components/base/Link/Link";
+import { Page } from "@/components/base/Page";
 
 export const IndexPage: FC = () => {
   return (

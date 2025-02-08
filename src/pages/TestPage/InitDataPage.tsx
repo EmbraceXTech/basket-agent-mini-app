@@ -5,8 +5,8 @@ import { Button, List, Placeholder, Text } from "@telegram-apps/telegram-ui";
 import {
   DisplayData,
   type DisplayDataRow,
-} from "@/components/DisplayData/DisplayData.tsx";
-import { Page } from "@/components/Page.tsx";
+} from "@/components/base/DisplayData/DisplayData";
+import { Page } from "@/components/base/Page";
 import { getAccessToken, useLinkAccount, usePrivy } from "@privy-io/react-auth";
 
 function getUserRows(user: User): DisplayDataRow[] {

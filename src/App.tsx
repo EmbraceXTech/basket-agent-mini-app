@@ -1,37 +1,36 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useLaunchParams, miniApp, useSignal } from "@telegram-apps/sdk-react";
+import { AppRoot } from "@telegram-apps/telegram-ui";
+import { Navigate, Route, Routes, HashRouter } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0);
+import { routes } from "@/navigation/routes.tsx";
+// import { useEffect } from "react";
+// import { usePrivy } from "@privy-io/react-auth";
+
+export function App() {
+  const lp = useLaunchParams();
+  const isDark = useSignal(miniApp.isDark);
+
+  // const { linkTelegram } = usePrivy();
+
+  // useEffect(() => {
+  //   if (lp.initDataRaw) {
+  //     linkTelegram({ launchParams: { initDataRaw: lp.initDataRaw } });
+  //   }
+  // }, [linkTelegram, lp.initDataRaw]);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Hello, Welcome from Onesec</h1>
-      <br />
-      <h4>Vite + React</h4>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <AppRoot
+      appearance={isDark ? "dark" : "light"}
+      platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
+    >
+      <HashRouter>
+        <Routes>
+          {routes.map((route) => (
+            <Route key={route.path} {...route} />
+          ))}
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </HashRouter>
+    </AppRoot>
   );
 }
-
-export default App;

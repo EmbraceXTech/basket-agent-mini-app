@@ -1,9 +1,10 @@
-import type { ComponentType, JSX } from 'react';
+import type { ComponentType, JSX } from "react";
 
-import { IndexPage } from '@/pages/IndexPage/IndexPage';
-import { InitDataPage } from '@/pages/InitDataPage.tsx';
-import { LaunchParamsPage } from '@/pages/LaunchParamsPage.tsx';
-import { ThemeParamsPage } from '@/pages/ThemeParamsPage.tsx';
+import { IndexPage } from "@/pages/TestPage/IndexPage";
+import { InitDataPage } from "@/pages/TestPage/InitDataPage";
+import { LaunchParamsPage } from "@/pages/TestPage/LaunchParamsPage";
+import { ThemeParamsPage } from "@/pages/TestPage/ThemeParamsPage";
+import MainPage from "@/pages/MainPage";
 
 interface Route {
   path: string;
@@ -13,8 +14,17 @@ interface Route {
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
-  { path: '/init-data', Component: InitDataPage, title: 'Init Data' },
-  { path: '/theme-params', Component: ThemeParamsPage, title: 'Theme Params' },
-  { path: '/launch-params', Component: LaunchParamsPage, title: 'Launch Params' },
+  { path: "/", Component: MainPage },
+  { path: "/test/index", Component: IndexPage },
+  { path: "/test/init-data", Component: InitDataPage, title: "Init Data" },
+  {
+    path: "/test/theme-params",
+    Component: ThemeParamsPage,
+    title: "Theme Params",
+  },
+  {
+    path: "/test/launch-params",
+    Component: LaunchParamsPage,
+    title: "Launch Params",
+  },
 ];
