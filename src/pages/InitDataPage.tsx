@@ -1,6 +1,6 @@
 import { type FC, useEffect, useMemo, useState } from "react";
 import { initData, type User, useSignal } from "@telegram-apps/sdk-react";
-import { List, Placeholder, Text } from "@telegram-apps/telegram-ui";
+import { Button, List, Placeholder, Text } from "@telegram-apps/telegram-ui";
 
 import {
   DisplayData,
@@ -30,7 +30,7 @@ export const InitDataPage: FC = () => {
 
   const [token, setToken] = useState<string | null>(null);
 
-  const { authenticated, user } = usePrivy();
+  const { authenticated, user, login } = usePrivy();
 
   useEffect(() => {
     getAccessToken().then((token) => {
@@ -115,6 +115,9 @@ export const InitDataPage: FC = () => {
   }
   return (
     <Page>
+      <Button onClick={() => login({ loginMethods: ["telegram"] })}>
+        Login
+      </Button>
       <List>
         {authenticated && (
           <div>
