@@ -1,21 +1,40 @@
-export const encodeEthURI = ({
+export function generateEIP681URI({
+  tokenAddress,
+  toAddress,
   amount,
-  ethAddress,
   chainId,
 }: {
-  amount?: string;
-  ethAddress: string;
-  chainId: string;
-}) => {
-  // Get Bitcoin amount and convert to Wei (assuming 1 BTC = 1 ETH for simplicity)
-  const _amount = parseFloat(amount || "0"); // Default to 0 if no amount
-  const weiAmount = _amount * 10 ** 18; // Convert ETH to Wei
-
-  // Construct Ethereum URI
-  let ethereumURI = `ethereum:${ethAddress}@${chainId}`;
-  if (_amount > 0) {
-    ethereumURI += `?value=${weiAmount.toFixed(0)}`;
+  tokenAddress: string;
+  toAddress: string;
+  amount: string;
+  chainId: number;
+}) {
+  if (!tokenAddress || !toAddress || !amount) {
+    throw new Error("Missing required parameters");
   }
 
-  return ethereumURI;
-};
+  const functionSelector = "0xa9059cbb";
+  const recipient = toAddress.replace("0x", "").padStart(64, "0");
+  const amountHex = BigInt(amount).toString(16).padStart(64, "0");
+  const data = functionSelector + recipient + amountHex;
+
+  return `ethereum:${tokenAddress}/transfer?data=${data}&chainId=${chainId}`;
+}
+
+export function generateNativeTokenURI({
+  toAddress,
+  amount,
+  chainId,
+}: {
+  toAddress: string;
+  amount: string;
+  chainId: number;
+}) {
+  if (!toAddress || !amount) {
+    throw new Error("Missing required parameters");
+  }
+
+  const amountWei = BigInt(parseFloat(amount) * 10 ** 18).toString();
+
+  return `ethereum:${toAddress}?value=${amountWei}&chainId=${chainId}`;
+}

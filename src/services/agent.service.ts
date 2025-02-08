@@ -17,7 +17,7 @@ const agents: IAgentResponse[] = [
       },
     ],
     strategy: "strategy",
-    walletAddress: "walletAddress",
+    walletAddress: "0xAb5801a7D398351b8bE11C439e05C5b3259aec9B", // Mock real Ethereum wallet address
     intervalSeconds: 10,
     endDate: new Date(),
     isRunning: true,
@@ -33,7 +33,7 @@ const agents: IAgentResponse[] = [
       },
     ],
     strategy: "strategy",
-    walletAddress: "walletAddress",
+    walletAddress: "0x4E83362442B8d1beC281594cEa3050c8EB01311C", // Mock real Ethereum wallet address
     intervalSeconds: 10,
     endDate: new Date(),
     isRunning: false,
