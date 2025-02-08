@@ -1,25 +1,32 @@
-import { themeParams, useSignal } from "@telegram-apps/sdk-react";
-import type { FC } from "react";
-import { List } from "@telegram-apps/telegram-ui";
+import { usePrivy } from '@privy-io/react-auth';
 
-import { DisplayData } from "@/components/DisplayData/DisplayData.tsx";
-import { Page } from "@/components/Page.tsx";
+export function ThemeParamsPage() {
+  const { authenticated, user, login, logout, linkTelegram } = usePrivy();
 
-export const ThemeParamsPage: FC = () => {
-  const tp = useSignal(themeParams.state);
+  const handleTelegramLink = async () => {
+    try {
+      await linkTelegram();
+      alert('Telegram account linked successfully!');
+    } catch (error) {
+      console.error('Error linking Telegram:', error);
+      alert('Failed to link Telegram.');
+    }
+  };
 
   return (
-    <Page>
-      <List>
-        <DisplayData
-          rows={Object.entries(tp).map(([title, value]) => ({
-            title: title
-              .replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`)
-              .replace(/background/, "bg"),
-            value,
-          }))}
-        />
-      </List>
-    </Page>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1>Privy Telegram Auth</h1>
+      {!authenticated ? (
+        <button onClick={login}>Login with Privy</button>
+      ) : (
+        <>
+          <h2>Welcome, {user?.email?.toString() || 'User'}</h2>
+          <p>Telegram: {user?.telegram?.username || 'Not linked'}</p>
+
+          <button onClick={handleTelegramLink}>Link Telegram</button>
+          <button onClick={logout} style={{ marginLeft: '10px' }}>Logout</button>
+        </>
+      )}
+    </div>
   );
-};
+}
