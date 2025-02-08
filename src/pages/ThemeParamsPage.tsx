@@ -9,6 +9,21 @@ export function ThemeParamsPage() {
     linkTelegram();
   };
 
+  const handleTelegramLogin = async () => {
+    try {
+      await loginTelegram();
+  
+      setTimeout(() => {
+        if (state.status === "loading") {
+          console.warn("⚠️ Still stuck in 'loading' - retrying login...");
+          window.location.reload(); // Force retry
+        }
+      }, 5000);
+    } catch (error) {
+      console.error("❌ Login Error:", error);
+    }
+  };
+
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <div>{state.status}</div>
@@ -21,7 +36,7 @@ export function ThemeParamsPage() {
           <button onClick={() => login({ loginMethods: ["telegram"] })}>
             Login with Privy
           </button>
-          <button onClick={() => loginTelegram()}>Login with Telegram</button>
+          <button onClick={handleTelegramLogin}>Login with Telegram</button>
         </>
       ) : (
         <>
