@@ -1,8 +1,7 @@
 import { usePrivy } from "@privy-io/react-auth";
-import { useEffect } from "react";
 
 export function ThemeParamsPage() {
-  const { authenticated, user, login, logout, linkTelegram } = usePrivy();
+  const { ready, authenticated, user, login, logout, linkTelegram } = usePrivy();
 
   const handleTelegramLink = async () => {
     try {
@@ -13,19 +12,12 @@ export function ThemeParamsPage() {
       alert("Failed to link Telegram.");
     }
   };
-  useEffect(() => {
-    const telegramWebApp = (
-      window as unknown as { Telegram?: { WebApp?: { expand: () => void } } }
-    ).Telegram?.WebApp;
-    if (telegramWebApp) {
-      console.log("Telegram Mini App detected");
-      telegramWebApp.expand(); // Ensure app is expanded
-    }
-  }, []);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Privy Telegram Auth</h1>
+      <p>{authenticated ? "Authenticated" : "Not authenticated"}</p>
+      <p>{ready ? "Ready" : "Not ready"}</p>
       {!authenticated ? (
         <button onClick={() => login({ loginMethods: ["telegram"] })}>
           Login with Privy
