@@ -22,6 +22,7 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
+      <div>VITE_TEST: {import.meta.env.VITE_TEST}</div>
       <PrivyProvider>
         <App />
       </PrivyProvider>

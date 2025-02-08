@@ -1,10 +1,10 @@
 import { PrivyProvider } from "@privy-io/react-auth";
-import { appId } from "./config";
+// import { appId } from "./config";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
-      appId={appId}
+      appId={import.meta.env.VITE_PRIVY_APP_ID}
       config={{
         // Customize Privy's appearance in your app
         appearance: {
