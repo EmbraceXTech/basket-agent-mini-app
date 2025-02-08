@@ -130,7 +130,7 @@ export const InitDataPage: FC = () => {
   }
   return (
     <Page>
-      <Button onClick={() => login({ loginMethods: ["telegram"] })}>
+      <Button onClick={() => login({ loginMethods: ["telegram", "email"] })}>
         Login
       </Button>
       <Button onClick={() => linkTelegram({ launchParams: { initDataRaw } })}>
