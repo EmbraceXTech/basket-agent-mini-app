@@ -33,7 +33,7 @@ export function ThemeParamsPage() {
       <p>{ready ? "Ready" : "Not ready"}</p>
       {!authenticated ? (
         <>
-          <button onClick={() => login({ loginMethods: ["telegram"] })}>
+          <button onClick={() => login({ loginMethods: ["telegram", "email"] })}>
             Login with Privy
           </button>
           <button onClick={handleTelegramLogin}>Login with Telegram</button>
