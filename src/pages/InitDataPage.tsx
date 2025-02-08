@@ -30,7 +30,7 @@ export const InitDataPage: FC = () => {
 
   const [token, setToken] = useState<string | null>(null);
 
-  const { authenticated, user, login } = usePrivy();
+  const { authenticated, user, login, linkTelegram } = usePrivy();
 
   useEffect(() => {
     getAccessToken().then((token) => {
@@ -117,6 +117,9 @@ export const InitDataPage: FC = () => {
     <Page>
       <Button onClick={() => login({ loginMethods: ["telegram"] })}>
         Login
+      </Button>
+      <Button onClick={() => linkTelegram({ launchParams: { initDataRaw } })}>
+        Link Telegram
       </Button>
       <div>{authenticated ? "true" : "false"}</div>
       <div>{user?.telegram?.telegramUserId}</div>
