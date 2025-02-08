@@ -1,12 +1,13 @@
-import { type FC, useMemo } from "react";
+import { type FC, useEffect, useMemo, useState } from "react";
 import { initData, type User, useSignal } from "@telegram-apps/sdk-react";
-import { List, Placeholder } from "@telegram-apps/telegram-ui";
+import { List, Placeholder, Text } from "@telegram-apps/telegram-ui";
 
 import {
   DisplayData,
   type DisplayDataRow,
 } from "@/components/DisplayData/DisplayData.tsx";
 import { Page } from "@/components/Page.tsx";
+import { getAccessToken, usePrivy } from "@privy-io/react-auth";
 
 function getUserRows(user: User): DisplayDataRow[] {
   return [
@@ -26,6 +27,17 @@ function getUserRows(user: User): DisplayDataRow[] {
 export const InitDataPage: FC = () => {
   const initDataRaw = useSignal(initData.raw);
   const initDataState = useSignal(initData.state);
+
+  const [token, setToken] = useState<string | null>(null);
+
+  const { authenticated, user } = usePrivy();
+
+  useEffect(() => {
+    getAccessToken().then((token) => {
+      console.log("token:", token);
+      setToken(token);
+    });
+  }, []);
 
   const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
     if (!initDataState || !initDataRaw) {
@@ -82,7 +94,7 @@ export const InitDataPage: FC = () => {
       { title: "username", value: username },
       { title: "photo_url", value: photoUrl },
     ];
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initData]);
 
   if (!initDataRows) {
@@ -103,6 +115,15 @@ export const InitDataPage: FC = () => {
   }
   return (
     <Page>
+      <List>
+        {authenticated && (
+          <div>
+            <Text>Access Token: {token}</Text>
+            <Text>Telegram ID: {user?.telegram?.telegramUserId}</Text>
+            <Text>Telegram Username: {user?.telegram?.username}</Text>
+          </div>
+        )}
+      </List>
       <List>
         <DisplayData header={"Init Data"} rows={initDataRows} />
         {userRows && <DisplayData header={"User"} rows={userRows} />}

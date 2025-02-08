@@ -1,0 +1,1 @@
+export const appId = import.meta.env.VITE_PRIVY_APP_ID || "";
