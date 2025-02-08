@@ -5,11 +5,13 @@ import { PropsWithChildren, useEffect } from "react";
 export function Page({
   children,
   back = true,
+  onBack,
 }: PropsWithChildren<{
   /**
    * True if it is allowed to go back from this page.
    */
   back?: boolean;
+  onBack?: () => void;
 }>) {
   const navigate = useNavigate();
 
@@ -17,12 +19,16 @@ export function Page({
     if (back) {
       backButton.show();
       return backButton.onClick(() => {
-        navigate(-1);
+        if (onBack) {
+          onBack();
+        } else {
+          navigate(-1);
+        }
       });
     }
     backButton.hide();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [back]);
+  }, [back, onBack]);
 
   return <>{children}</>;
 }
