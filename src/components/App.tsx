@@ -13,10 +13,10 @@ export function App() {
   const { linkTelegram } = usePrivy();
 
   useEffect(() => {
-    if (lp) {
-      linkTelegram({ launchParams: lp });
+    if (lp.initDataRaw) {
+      linkTelegram({ launchParams: { initDataRaw: lp.initDataRaw } });
     }
-  }, [linkTelegram, lp]);
+  }, [linkTelegram, lp.initDataRaw]);
 
   return (
     <AppRoot
