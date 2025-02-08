@@ -1,6 +1,7 @@
 import { App } from "@/App";
 import { ErrorBoundary } from "@/components/base/ErrorBoundary";
 import PrivyProvider from "@/core/privy/provider.tsx";
+import { TanstackQueryProvider } from "./core/tanstack-query/provider";
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -22,9 +23,11 @@ function ErrorBoundaryError({ error }: { error: unknown }) {
 export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
-      <PrivyProvider>
-        <App />
-      </PrivyProvider>
+      <TanstackQueryProvider>
+        <PrivyProvider>
+          <App />
+        </PrivyProvider>
+      </TanstackQueryProvider>
     </ErrorBoundary>
   );
 }

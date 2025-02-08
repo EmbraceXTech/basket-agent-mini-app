@@ -18,7 +18,7 @@ interface Route {
 export const routes: Route[] = [
   { path: "/", Component: MainPage },
   { path: "/create", Component: CreatePage },
-  { path: "/manage", Component: ManagePage },
+  { path: "/manage/:id", Component: ManagePage },
   { path: "/test/index", Component: IndexPage },
   { path: "/test/init-data", Component: InitDataPage, title: "Init Data" },
   {

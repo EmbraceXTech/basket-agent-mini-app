@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import useStepperStore from "@/stores/createAgent.store";
 import { IAgentRequest } from "@/interfaces/agent";
-import { createAgent } from "@/services/agent.service";
+import agentApi from "@/services/agent.service";
 
 import { Page } from "@/components/base/Page";
 import CreateAgentForm from "@/components/agent/CreateAgentForm";
@@ -16,7 +16,7 @@ export default function CreatePage() {
 
   const handleCreate = async () => {
     try {
-      const response = await createAgent(data as IAgentRequest);
+      const response = await agentApi.createAgent(data as IAgentRequest);
       console.log(response);
       nextStep();
     } catch (error) {
