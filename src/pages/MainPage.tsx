@@ -8,6 +8,7 @@ export default function MainPage() {
     <Page back={false}>
       <List>
         <h1>Main Page</h1>
+        <h1 className="text-3xl font-bold underline">Hello world!</h1>
         <Link to="/test/index">To Test Page</Link>
       </List>
     </Page>
