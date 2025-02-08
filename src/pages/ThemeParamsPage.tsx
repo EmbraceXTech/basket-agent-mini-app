@@ -12,6 +12,7 @@ export function ThemeParamsPage() {
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <div>{state.status}</div>
+      <p>{window.location.href}</p>
       <h1>Privy Telegram Auth</h1>
       <p>{authenticated ? "Authenticated" : "Not authenticated"}</p>
       <p>{ready ? "Ready" : "Not ready"}</p>
