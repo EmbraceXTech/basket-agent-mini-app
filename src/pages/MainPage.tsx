@@ -1,4 +1,4 @@
-import { ClockIcon, BellAlertIcon } from "@heroicons/react/24/outline";
+import { ClockIcon } from "@heroicons/react/24/outline";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import { Button } from "@heroui/button";
 import { useMemo, useState } from "react";
@@ -82,7 +82,6 @@ export default function MainPage() {
           right={
             <div className="flex items-center gap-2">
               <ClockIcon className="w-6 h-6" />
-              <BellAlertIcon className="w-6 h-6" />
             </div>
           }
         />

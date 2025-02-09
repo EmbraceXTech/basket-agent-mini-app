@@ -11,8 +11,15 @@ import CreateAgentHeader from "@/components/agent/CreateAgentHeader";
 
 export default function CreatePage() {
   const navigator = useNavigate();
-  const { currentStep, totalSteps, nextStep, prevStep, isCompleted, data, canNext } =
-    useStepperStore();
+  const {
+    currentStep,
+    totalSteps,
+    nextStep,
+    prevStep,
+    isCompleted,
+    data,
+    canNext,
+  } = useStepperStore();
 
   const handleCreate = async () => {
     try {
@@ -33,8 +40,9 @@ export default function CreatePage() {
         </div>
         {isCompleted() ? (
           <Button
-            className="bg-blue-500 rounded-full text-white"
+            className="rounded-full text-white"
             variant="solid"
+            color="primary"
             onPress={handleCreate}
             isDisabled={!canNext}
           >
@@ -43,8 +51,9 @@ export default function CreatePage() {
         ) : currentStep === totalSteps - 1 ? (
           <>
             <Button
-              className="bg-blue-500 rounded-full text-white"
+              className="rounded-full text-white"
               variant="solid"
+              color="primary"
               onPress={() => navigator("/")}
             >
               Done
@@ -52,8 +61,9 @@ export default function CreatePage() {
           </>
         ) : (
           <Button
-            className="bg-blue-500 rounded-full text-white"
+            className="rounded-full text-white"
             variant="solid"
+            color="primary"
             onPress={nextStep}
             isDisabled={!canNext}
           >
