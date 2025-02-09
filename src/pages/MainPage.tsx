@@ -11,7 +11,7 @@ import Header from "@/components/layout/Header";
 import agentApi from "@/services/agent.service";
 import { useDisclosure } from "@heroui/react";
 import TokenModal from "@/components/TokenModal";
-import { IAgentResponse } from "@/interfaces/agent";
+import { IAgent } from "@/interfaces/agent";
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -30,10 +30,10 @@ export default function MainPage() {
   };
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectAgent, setSelectAgent] = useState<IAgentResponse>();
+  const [selectAgent, setSelectAgent] = useState<IAgent>();
 
   const AgentTaskComponent = useMemo(() => {
-    const toggleStartPause = async (agentId: string) => {
+    const toggleStartPause = async (agentId: number) => {
       try {
         await agentApi.toggleStartPause(agentId);
         await refetch();

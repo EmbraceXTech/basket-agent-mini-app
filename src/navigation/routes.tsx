@@ -1,4 +1,4 @@
-import type { ComponentType, JSX } from "react";
+import type { JSX } from "react";
 
 import { IndexPage } from "@/pages/TestPage/IndexPage";
 import { InitDataPage } from "@/pages/TestPage/InitDataPage";
@@ -10,25 +10,41 @@ import ManagePage from "@/pages/ManagePage";
 
 interface Route {
   path: string;
-  Component: ComponentType;
+  element: React.ReactNode;
   title?: string;
   icon?: JSX.Element;
 }
 
 export const routes: Route[] = [
-  { path: "/", Component: MainPage },
-  { path: "/create", Component: CreatePage },
-  { path: "/manage/:id", Component: ManagePage },
-  { path: "/test/index", Component: IndexPage },
-  { path: "/test/init-data", Component: InitDataPage, title: "Init Data" },
+  {
+    path: "/",
+    element: <MainPage />,
+  },
+  {
+    path: "/create",
+    element: <CreatePage />,
+  },
+  {
+    path: "/manage/:id",
+    element: <ManagePage />,
+  },
+  {
+    path: "/test/index",
+    element: <IndexPage />,
+  },
+  {
+    path: "/test/init-data",
+    element: <InitDataPage />,
+    title: "Init Data",
+  },
   {
     path: "/test/theme-params",
-    Component: ThemeParamsPage,
+    element: <ThemeParamsPage />,
     title: "Theme Params",
   },
   {
     path: "/test/launch-params",
-    Component: LaunchParamsPage,
+    element: <LaunchParamsPage />,
     title: "Launch Params",
   },
 ];

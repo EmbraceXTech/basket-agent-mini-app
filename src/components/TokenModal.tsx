@@ -1,4 +1,4 @@
-import { IAgentResponse } from "@/interfaces/agent";
+import { IAgent } from "@/interfaces/agent";
 import {
   Button,
   Modal,
@@ -15,7 +15,7 @@ export default function TokenModal({
 }: {
   isOpen: boolean;
   onOpenChange: () => void;
-  agent?: IAgentResponse;
+  agent?: IAgent;
 }) {
   return (
     <Modal

@@ -1,45 +1,11 @@
-// import axiosInstance from "@/core/axios";
-
-import { IAgentRequest, IAgentResponse } from "@/interfaces/agent";
-
-const agents: IAgentResponse[] = [
-  {
-    id: "1",
-    chainId: "1",
-    selectedTokens: [
-      {
-        tokenAddress: "0x123",
-        tokenSymbol: "token1",
-      },
-      {
-        tokenAddress: "0x123",
-        tokenSymbol: "token2",
-      },
-    ],
-    strategy: "strategy",
-    walletAddress: "0xAb5801a7D398351b8bE11C439e05C5b3259aec9B", // Mock real Ethereum wallet address
-    intervalSeconds: 10,
-    endDate: new Date(),
-    isRunning: true,
-    name: "agent1",
-  },
-  {
-    id: "2",
-    chainId: "2",
-    selectedTokens: [
-      {
-        tokenAddress: "0x123",
-        tokenSymbol: "token1",
-      },
-    ],
-    strategy: "strategy",
-    walletAddress: "0x4E83362442B8d1beC281594cEa3050c8EB01311C", // Mock real Ethereum wallet address
-    intervalSeconds: 10,
-    endDate: new Date(),
-    isRunning: false,
-    name: "agent2",
-  },
-];
+import axiosInstance from "@/core/axios";
+import {
+  IAgent,
+  IAgentInfo,
+  IAgentInfoResponse,
+  IAgentRequest,
+  IAgentResponse,
+} from "@/interfaces/agent";
 
 const createAgent = async (data: IAgentRequest) => {
   try {
@@ -52,17 +18,20 @@ const createAgent = async (data: IAgentRequest) => {
   }
 };
 
-const getAgents = async () => {
+const getAgents = async (): Promise<IAgent[]> => {
   try {
-    // const response = await axiosInstance.get<IAgentResponse[]>("/agents");
-    return agents;
+    const response = await axiosInstance.get<IAgentResponse[]>("/agent");
+    return response.data.map((agent) => ({
+      ...agent,
+      selectedTokens: agent.selectedTokens.map((token) => JSON.parse(token)),
+    }));
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
-const toggleStartPause = async (agentId: string) => {
+const toggleStartPause = async (agentId: number) => {
   try {
     console.log(agentId);
     // await axiosInstance.post(`/agents/${agentId}/toggle-start-pause`);
@@ -73,11 +42,17 @@ const toggleStartPause = async (agentId: string) => {
   }
 };
 
-const getAgentId = async (agentId: string) => {
+const getAgentId = async (agentId: number): Promise<IAgentInfo> => {
   try {
-    const agent = agents.find((agent) => agent.id === agentId);
-    // const response = await axiosInstance.get<IAgentResponse>(`/agents/${agentId}`);
-    return agent;
+    const response = await axiosInstance.get<IAgentInfoResponse>(
+      `/agent/${agentId}`
+    );
+    return {
+      ...response.data,
+      selectedTokens: response.data.selectedTokens.map((token) =>
+        JSON.parse(token)
+      ),
+    };
   } catch (error) {
     console.error(error);
     throw error;

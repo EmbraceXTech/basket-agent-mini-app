@@ -1,8 +1,8 @@
-import { IAgentResponse } from "@/interfaces/agent";
+import { IAgent } from "@/interfaces/agent";
 import EthereumQRGenerator from "../base/EthereumQRGenerator";
 import { Button } from "@heroui/react";
 
-export default function ManageAsset({ agent }: { agent: IAgentResponse }) {
+export default function ManageAsset({ agent }: { agent: IAgent }) {
   const handleCopy = () => {
     navigator.clipboard.writeText(agent.walletAddress);
   };

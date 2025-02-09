@@ -2,6 +2,7 @@ import { App } from "@/App";
 import { ErrorBoundary } from "@/components/base/ErrorBoundary";
 import PrivyProvider from "@/core/privy/provider.tsx";
 import { TanstackQueryProvider } from "./core/tanstack-query/provider";
+import ATHandler from "./components/base/ATHandler";
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -25,7 +26,9 @@ export function Root() {
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <TanstackQueryProvider>
         <PrivyProvider>
-          <App />
+          <ATHandler>
+            <App />
+          </ATHandler>
         </PrivyProvider>
       </TanstackQueryProvider>
     </ErrorBoundary>
