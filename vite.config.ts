@@ -6,11 +6,7 @@ import react from "@vitejs/plugin-react-swc";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  define: {
-    "import.meta.env.VITE_PRIVY_APP_ID": JSON.stringify(
-      process.env.VITE_PRIVY_APP_ID
-    ),
-  },
+  define: {},
   base: "/",
   plugins: [
     // Allows using React dev server along with building a React application with Vite.
