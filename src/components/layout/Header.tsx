@@ -10,10 +10,14 @@ export default function Header({
   right?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between relative my-2">
-      {left ? <Fragment>{left}</Fragment> : <div></div>}
-      <h1 className="text-xl absolute left-1/2 transform -translate-x-1/2">{title}</h1>
-      {right ? <Fragment>{right}</Fragment> : <div></div>}
+    <div className="flex items-center justify-between relative bg-white/80 backdrop-blur-md">
+      <div className="w-[24px]">
+        {left ? <Fragment>{left}</Fragment> : null}
+      </div>
+      <h1 className="text-lg font-semibold text-center flex-1">{title}</h1>
+      <div className="w-[24px] flex justify-end">
+        {right ? <Fragment>{right}</Fragment> : null}
+      </div>
     </div>
   );
 }

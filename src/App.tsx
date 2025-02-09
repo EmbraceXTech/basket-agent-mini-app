@@ -20,20 +20,22 @@ export function App() {
   // }, [linkTelegram, lp.initDataRaw]);
 
   return (
-    <AppRoot
+    <>
+      <AppRoot
       // appearance={isDark ? "dark" : "light"}
       // platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
-    >
-      <div className="w-full min-h-screen text-black">
-        <HashRouter>
-          <Routes>
-          {routes.map((route) => (
-            <Route key={route.path} {...route} />
-          ))}
-          <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </HashRouter>
-      </div>
-    </AppRoot>
+      >
+        <div className="w-full min-h-screen text-black">
+          <HashRouter>
+            <Routes>
+              {routes.map((route) => (
+                <Route key={route.path} {...route} />
+              ))}
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </HashRouter>
+        </div>
+      </AppRoot>
+    </>
   );
 }

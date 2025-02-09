@@ -1,17 +1,16 @@
-import { ClockIcon } from "@heroicons/react/24/outline";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import { Button } from "@heroui/button";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import type { FC } from "react";
 
-// import { Link } from "@/components/base/Link/Link";
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
 import agentApi from "@/services/agent.service";
-import { useDisclosure } from "@heroui/react";
-import TokenModal from "@/components/TokenModal";
-import { IAgent } from "@/interfaces/agent";
+import AgentCard from "@/components/agent/AgentCard";
+
+const PlusCircleIconComponent = PlusCircleIcon as FC;
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -25,14 +24,11 @@ export default function MainPage() {
     queryFn: () => agentApi.getAgents(),
   });
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     navigate("/create");
   };
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [selectAgent, setSelectAgent] = useState<IAgent>();
-
-  const AgentTaskComponent = useMemo(() => {
+  const AgentList = useMemo(() => {
     const toggleStartPause = async (agentId: number) => {
       try {
         await agentApi.toggleStartPause(agentId);
@@ -41,68 +37,61 @@ export default function MainPage() {
         console.error(error);
       }
     };
-    if (agents?.length === 0) {
+
+    if (!agents || agents.length === 0) {
       return (
-        <div>
-          <div>No agents</div>
-          <Button variant="solid" onPress={() => navigate("/create")}>
-            Create
+        <div className="flex flex-col items-center justify-center h-full gap-4">
+          <div className="text-sm">Create your first Basket Agent</div>
+          <Button
+            variant="solid"
+            className="bg-[#FF4F29] text-white rounded-full"
+            startContent={<PlusCircleIconComponent className="w-4 h-4" />}
+            onPress={handleCreate}
+          >
+            Create Agent
           </Button>
         </div>
       );
     }
 
-    return agents?.map((agent) => (
-      <div
-        key={agent.id}
-        onClick={() => {
-          setSelectAgent(agent);
-          onOpen();
-        }}
-      >
-        <div>Agent ID: {agent.id}</div>
-        <div>Agent Name: {agent.name}</div>
-        <Button variant="solid" onPress={() => navigate(`/manage/${agent.id}`)}>
-          Setting
-        </Button>
-        <Button variant="solid" onPress={() => toggleStartPause(agent.id)}>
-          {agent.isRunning ? "Pause" : "Start"}
-        </Button>
-        <Button variant="solid" isDisabled color="danger">
-          Terminate
-        </Button>
+    return (
+      <div className="space-y-4">
+        {agents &&
+          agents.map((agent) => (
+            <AgentCard
+              key={agent.id}
+              agent={agent}
+              onToggleStartPause={toggleStartPause}
+            />
+          ))}
       </div>
-    ));
-  }, [agents, navigate, onOpen, refetch]);
+    );
+  }, [agents, navigate, refetch]);
+
   return (
-    <Page back={true}>
+    <Page back={false}>
       <div className="w-full h-screen p-4 flex flex-col">
-        <Header
-          title="Main Page"
-          right={
-            <div className="flex items-center gap-2">
-              <ClockIcon className="w-6 h-6" />
-            </div>
-          }
-        />
+        <Header title="Basket Agent" />
         <div className="flex-1">
-          {isLoading ? <div>Loading...</div> : <div>{AgentTaskComponent}</div>}
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              Loading...
+            </div>
+          ) : (
+            AgentList
+          )}
         </div>
-        {/* <Link to="/test/index">To Test Page</Link> */}
-        <Button
-          startContent={<PlusCircleIcon className="w-4 h-4" />}
-          className="bg-[#FF4F29] rounded-full text-white"
-          variant="solid"
-          onPress={handleCreate}
-        >
-          Create
-        </Button>
+        {agents?.length > 0 && (
+          <Button
+            startContent={<PlusCircleIconComponent className="w-4 h-4" />}
+            className="bg-[#FF4F29] rounded-full text-white mt-4"
+            variant="solid"
+            onPress={handleCreate}
+          >
+            Create Agent
+          </Button>
+        )}
       </div>
-      <TokenModal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        agent={selectAgent}
-      />
     </Page>
   );
 }

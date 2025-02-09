@@ -14,3 +14,5 @@ export const CHAIN_LIST = {
     imageUrl: "https://assets.coinbase.com/assets/base-logo-1654116827597.png",
   },
 };
+
+export const DEFAULT_CHAIN_ID = "8453";

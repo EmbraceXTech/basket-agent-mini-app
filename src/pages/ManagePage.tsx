@@ -27,7 +27,7 @@ export default function ManagePage() {
   return (
     <Page back={true}>
       <div className="w-full h-screen p-4 flex flex-col">
-        <Header title={`Agent ID: ${id}`} />
+        <Header title={`Agent: ${agentInfo.name}`} />
         <div className="flex-1">
           {isLoading ? (
             <div>Loading...</div>
