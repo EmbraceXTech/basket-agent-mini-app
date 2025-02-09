@@ -54,3 +54,12 @@ export interface IAgent extends IAgentResponse {
 export interface IAgentInfo extends IAgentInfoResponse {
   selectedTokens: IToken[];
 }
+
+export interface IAgentWalletBalanceResponse {
+  balances: Array<Array<string>>;
+}
+
+export interface IAgentWalletBalance {
+  tokenSymbol: string;
+  balance: string;
+}

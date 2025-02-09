@@ -5,6 +5,8 @@ import {
   IAgentInfoResponse,
   IAgentRequest,
   IAgentResponse,
+  IAgentWalletBalance,
+  IAgentWalletBalanceResponse,
 } from "@/interfaces/agent";
 
 const createAgent = async (data: IAgentRequest) => {
@@ -68,6 +70,22 @@ const getAgentId = async (agentId: number): Promise<IAgentInfo> => {
   }
 };
 
-const agentApi = { createAgent, getAgents, toggleStartPause, getAgentId };
+const getAgentWalletBalance = async (agentId: number): Promise<IAgentWalletBalance[]> => {
+  try {
+    const response = await axiosInstance.get<IAgentWalletBalanceResponse>(
+      `/agent/${agentId}/wallet/balance`
+    );
+    console.log(response.data);
+    return response.data.balances.map((balance) => ({
+      tokenSymbol: balance[0],
+      balance: balance[1],
+    }));
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+const agentApi = { createAgent, getAgents, toggleStartPause, getAgentId, getAgentWalletBalance };
 
 export default agentApi;
