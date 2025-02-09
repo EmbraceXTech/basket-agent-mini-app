@@ -1,11 +1,10 @@
 import { QRCodeCanvas } from "qrcode.react";
-import {
-  generateEIP681URI,
-  generateNativeTokenURI,
-} from "@/utils/encodeEthURI.util";
+// import {
+//   generateEIP681URI,
+//   generateNativeTokenURI,
+// } from "@/utils/encodeEthURI.util";
 
 function QRCodeGenerator({
-  amount,
   tokenAddress,
   toAddress,
   chainId,
@@ -17,19 +16,19 @@ function QRCodeGenerator({
   chainId: string;
   isNativeToken?: boolean;
 }) {
-  const eip681URI = isNativeToken
-    ? generateNativeTokenURI({
-        amount: amount || "0",
-        toAddress,
-        chainId: parseInt(chainId),
-      })
-    : generateEIP681URI({
-        tokenAddress: tokenAddress || "",
-        toAddress,
-        amount: amount || "0",
-        chainId: parseInt(chainId),
-      });
-  console.log(eip681URI);
+  // const eip681URI = isNativeToken
+  //   ? generateNativeTokenURI({
+  //       amount: amount || "0",
+  //       toAddress,
+  //       chainId: parseInt(chainId),
+  //     })
+  //   : generateEIP681URI({
+  //       tokenAddress: tokenAddress || "",
+  //       toAddress,
+  //       amount: amount || "0",
+  //       chainId: parseInt(chainId),
+  //     });
+  // console.log(eip681URI);
   const deeplink = isNativeToken
     ? `https://metamask.app.link/send/${toAddress}@${chainId}`
     : `https://metamask.app.link/send/pay-${tokenAddress}@${chainId}/transfer?address=${toAddress}`;

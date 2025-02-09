@@ -1,4 +1,3 @@
-import { Button } from "@heroui/react";
 import { useParams } from "react-router-dom";
 import { Tabs, Tab } from "@heroui/react";
 
@@ -12,12 +11,17 @@ import agentApi from "@/services/agent.service";
 
 export default function ManagePage() {
   const { id } = useParams();
-  console.log(id);
-  const { data: agent, isLoading } = useQuery({
-    queryKey: ["agent", id],
-    queryFn: () => agentApi.getAgentId(id || ""),
+  const { data: agentInfo, isLoading } = useQuery({
+    queryKey: ["agentInfo", id],
+    queryFn: () => agentApi.getAgentId(+(id || 0)),
   });
-  if (!agent) {
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+  if (!id) {
+    return <div>Agent ID is required</div>;
+  }
+  if (!agentInfo) {
     return <div>Agent not found</div>;
   }
   return (
@@ -30,7 +34,7 @@ export default function ManagePage() {
           ) : (
             <Tabs aria-label="Tabs radius" radius="full" fullWidth>
               <Tab key="deposit" title="Deposit">
-                <ManageAsset agent={agent} />
+                <ManageAsset agentInfo={agentInfo} />
               </Tab>
               <Tab key="manage-knowledge" title="Manage Knowledge">
                 <ManageKnowledge />
@@ -41,9 +45,6 @@ export default function ManagePage() {
             </Tabs>
           )}
         </div>
-        <Button className="bg-blue-500 rounded-full text-white" variant="solid">
-          Start Now
-        </Button>
       </div>
     </Page>
   );
