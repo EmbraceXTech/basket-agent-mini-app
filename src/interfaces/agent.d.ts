@@ -1,12 +1,12 @@
 import type { IToken } from "./token";
-import type { IKnowledgeResponse } from "./knowledge";
+import type { IKnowledgeResponse, IKnowledgeRequest } from "./knowledge";
 
 export interface IAgentRequest {
   name: string;
   chainId: string;
   selectedTokens: IToken[];
+  knowledges: IKnowledgeRequest[];
   strategy: string;
-  walletAddress: string;
   intervalSeconds: number;
   endDate: Date;
   stopLossUSD?: number;

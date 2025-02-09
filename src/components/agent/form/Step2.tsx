@@ -1,5 +1,6 @@
 import useStepperStore from "@/stores/createAgent.store";
 import { RadioGroup, Radio, cn, RadioProps, Textarea } from "@heroui/react";
+import { useEffect } from "react";
 
 interface CustomRadioProps extends RadioProps {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ export const CustomRadio = (props: CustomRadioProps) => {
 
 // Strategy
 export default function Step2() {
-  const { data, setData } = useStepperStore();
+  const { data, setData, setCanNext, canNext } = useStepperStore();
   const strategySets = [
     {
       id: 1,
@@ -47,6 +48,14 @@ export default function Step2() {
       value: "customStrategy",
     },
   ];
+  useEffect(() => {
+    if (data.strategy && data.strategy?.length > 0) {
+      setCanNext(true);
+    } else {
+      setCanNext(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.strategy, canNext]);
   return (
     <div>
       <RadioGroup

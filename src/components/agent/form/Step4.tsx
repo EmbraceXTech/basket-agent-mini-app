@@ -1,12 +1,29 @@
+import useStepperStore from "@/stores/createAgent.store";
 import { DatePicker, Input } from "@heroui/react";
 import { now, getLocalTimeZone, ZonedDateTime } from "@internationalized/date";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Step4() {
+  const { data, setData, canNext, setCanNext } = useStepperStore();
   const [interval, setInterval] = useState("1");
   const [endDate, setEndDate] = useState<ZonedDateTime | null>(
     now(getLocalTimeZone())
   );
+  useEffect(() => {
+    setData({
+      intervalSeconds: parseInt(interval),
+      endDate: endDate?.toDate(),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interval, endDate]);
+  useEffect(() => {
+    if (data.intervalSeconds && data.endDate) {
+      setCanNext(true);
+    } else {
+      setCanNext(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canNext, data.intervalSeconds, data.endDate]);
   return (
     <div>
       <Input

@@ -9,8 +9,17 @@ import {
 
 const createAgent = async (data: IAgentRequest) => {
   try {
-    console.log(data);
-    // await axiosInstance.post("/agents", data);
+    const payload = {
+      ...data,
+      knowledges: data.knowledges.map((knowledge) => ({
+        ...knowledge,
+        content: knowledge.content,
+      })),
+      intervalSeconds: data.intervalSeconds * 60,
+      endDate: data.endDate.toISOString(),
+    };
+    console.log(payload);
+    await axiosInstance.post("/agent", payload);
     return true;
   } catch (error) {
     console.error(error);

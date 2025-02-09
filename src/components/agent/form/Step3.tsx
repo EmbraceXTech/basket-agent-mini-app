@@ -1,49 +1,66 @@
-import { IKnowledge } from "@/interfaces/knowledge";
+import { IKnowledgeRequest } from "@/interfaces/knowledge";
+import useStepperStore from "@/stores/createAgent.store";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // add knowledge base
 export default function Step3() {
+  const { data, setData, setCanNext } = useStepperStore();
   const [knowledgeBase, setKnowledgeBase] = useState<
-    (IKnowledge & { id: number })[]
-  >([
-    {
-      id: 1,
-      name: "Knowledge 1",
-      value: "Knowledge 1 value",
-    },
-  ]);
+    (IKnowledgeRequest & { id: number })[]
+  >(
+    data.knowledges?.map((knowledge, key) => ({
+      id: key + 1,
+      name: knowledge.name,
+      content: knowledge.content,
+    })) ?? [
+      {
+        id: 1,
+        name: "",
+        content: "",
+      },
+    ]
+  );
   const handleAddKnowledge = () => {
-    setKnowledgeBase([
-      ...knowledgeBase,
-      { id: knowledgeBase.length + 1, name: "", value: "" },
-    ]);
+    const newKnowledge = {
+      id: knowledgeBase.length + 1,
+      name: "",
+      content: "",
+    };
+    setKnowledgeBase((prev) => [...prev, newKnowledge]);
   };
   const handleDeleteKnowledge = (id: number) => {
-    setKnowledgeBase(knowledgeBase.filter((knowledge) => knowledge.id !== id));
+    setKnowledgeBase((prev) => prev.filter((knowledge) => knowledge.id !== id));
   };
+  const mapToKnowledgeRequest = (knowledge: (typeof knowledgeBase)[0]) => ({
+    name: knowledge.name,
+    content: knowledge.content,
+  });
   const handleChangeKnowledgeName = (name: string, id: number) => {
-    setKnowledgeBase(
-      knowledgeBase.map((knowledge) => {
-        if (knowledge.id === id) {
-          return { ...knowledge, name };
-        }
-        return knowledge;
-      })
+    setKnowledgeBase((prev) =>
+      prev.map((knowledge) =>
+        knowledge.id === id ? { ...knowledge, name } : knowledge
+      )
     );
   };
   const handleChangeKnowledgeValue = (value: string, id: number) => {
-    setKnowledgeBase(
-      knowledgeBase.map((knowledge) => {
-        if (knowledge.id === id) {
-          return { ...knowledge, value };
-        }
-        return knowledge;
-      })
+    setKnowledgeBase((prev) =>
+      prev.map((knowledge) =>
+        knowledge.id === id ? { ...knowledge, content: value } : knowledge
+      )
     );
   };
 
+  useEffect(() => {
+    setCanNext(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setData({ knowledges: knowledgeBase.map(mapToKnowledgeRequest) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [knowledgeBase]);
   return (
     <div>
       <div className="grid grid-cols-4">
@@ -53,7 +70,7 @@ export default function Step3() {
         <div></div>
         {knowledgeBase.map((knowledge) => (
           <>
-            <div>{knowledge.id}</div>
+            <div key={knowledge.id}>{knowledge.id}</div>
             <Input
               value={knowledge.name}
               onChange={(e) =>
@@ -61,7 +78,7 @@ export default function Step3() {
               }
             />
             <Input
-              value={knowledge.value}
+              value={knowledge.content}
               onChange={(e) =>
                 handleChangeKnowledgeValue(e.target.value, knowledge.id)
               }

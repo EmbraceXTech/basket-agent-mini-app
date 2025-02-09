@@ -1,6 +1,11 @@
-export interface IKnowledge {
+export interface IKnowledgeR {
   name: string;
   value: string;
+}
+
+export interface IKnowledgeRequest {
+  name: string;
+  content: string;
 }
 
 export interface IKnowledgeResponse {
