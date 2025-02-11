@@ -41,10 +41,12 @@ export default function MainPage() {
     if (!agents || agents.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center h-full gap-4">
-          <div className="text-sm">Create your first Basket Agent</div>
+          <div className="text-sm text-secondary-text">
+            You haven't created any trading bot.
+          </div>
           <Button
             variant="solid"
-            className="bg-[#FF4F29] text-white rounded-full"
+            className="bg-secondary-background text-secondary rounded-full"
             startContent={<PlusCircleIcon className="w-4 h-4" />}
             onPress={handleNavigateToCreate}
           >

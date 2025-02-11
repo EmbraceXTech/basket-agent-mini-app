@@ -14,7 +14,7 @@ export default function Header({
       <div className="w-[24px]">
         {left ? <Fragment>{left}</Fragment> : null}
       </div>
-      <h1 className="text-lg font-semibold text-center flex-1">{title}</h1>
+      <h1 className="text-lg font-meduim text-center flex-1">{title}</h1>
       <div className="w-[24px] flex justify-end">
         {right ? <Fragment>{right}</Fragment> : null}
       </div>
