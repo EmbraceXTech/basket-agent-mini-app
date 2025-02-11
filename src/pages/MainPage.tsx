@@ -1,16 +1,15 @@
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { ClockIcon } from "@heroicons/react/24/outline";
 import { Button } from "@heroui/button";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import type { FC } from "react";
 
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
 import agentApi from "@/services/agent.service";
 import AgentCard from "@/components/agent/AgentCard";
-
-const PlusCircleIconComponent = PlusCircleIcon as FC;
+import { Spinner } from "@heroui/react";
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -24,9 +23,10 @@ export default function MainPage() {
     queryFn: () => agentApi.getAgents(),
   });
 
-  const handleCreate = () => {
-    navigate("/create");
-  };
+  const handleNavigateToCreate = useCallback(
+    () => navigate("/create"),
+    [navigate]
+  );
 
   const AgentList = useMemo(() => {
     const toggleStartPause = async (agentId: number) => {
@@ -45,8 +45,8 @@ export default function MainPage() {
           <Button
             variant="solid"
             className="bg-[#FF4F29] text-white rounded-full"
-            startContent={<PlusCircleIconComponent className="w-4 h-4" />}
-            onPress={handleCreate}
+            startContent={<PlusCircleIcon className="w-4 h-4" />}
+            onPress={handleNavigateToCreate}
           >
             Create Agent
           </Button>
@@ -66,31 +66,31 @@ export default function MainPage() {
           ))}
       </div>
     );
-  }, [agents, navigate, refetch]);
+  }, [agents, handleNavigateToCreate, refetch]);
 
   return (
     <Page back={false}>
-      <div className="w-full h-screen p-4 flex flex-col">
-        <Header title="Basket Agent" />
-        <div className="flex-1">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              Loading...
-            </div>
-          ) : (
-            AgentList
-          )}
-        </div>
-        {agents?.length > 0 && (
-          <Button
-            startContent={<PlusCircleIconComponent className="w-4 h-4" />}
-            className="bg-[#FF4F29] rounded-full text-white mt-4"
-            variant="solid"
-            onPress={handleCreate}
-          >
-            Create Agent
-          </Button>
+      <div className="w-full min-h-screen p-4 flex flex-col">
+        <Header
+          title="Basket Agent"
+          right={<ClockIcon className="w-6 h-6" />}
+        />
+        {isLoading ? (
+          <div className="flex-1 flex flex-col space-y-4 items-center justify-center h-full">
+            <Spinner />
+            <div className="text-sm">Loading...</div>
+          </div>
+        ) : (
+          <div className="flex-1 h-full">{AgentList}</div>
         )}
+        <Button
+          startContent={<PlusCircleIcon className="w-4 h-4" />}
+          className="bg-[#FF4F29] rounded-full text-white mt-4"
+          variant="solid"
+          onPress={handleNavigateToCreate}
+        >
+          Create Agent
+        </Button>
       </div>
     </Page>
   );

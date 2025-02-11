@@ -13,7 +13,11 @@ module.exports = {
     extend: {
       colors: {
         primary: "var(--color-primary)",
-      }
+        secondary: "var(--color-secondary)",
+        "secondary-background": "var(--color-secondary-background)",
+        "secondary-icon": "var(--color-secondary-icon)",
+        "secondary-text": "var(--color-secondary-text)",
+      },
     },
   },
   darkMode: "class",

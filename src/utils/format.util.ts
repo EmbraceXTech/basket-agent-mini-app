@@ -7,7 +7,7 @@ export const formatUSD = (value?: number | undefined | null) => {
 };
 
 export const formatPercent = (value?: number | undefined | null) => {
-  if (!value) return "-";
+  if (!value) return "0.00";
   return new Intl.NumberFormat('en-US', {
     style: 'percent',
     minimumFractionDigits: 2,

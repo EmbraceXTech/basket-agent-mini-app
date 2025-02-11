@@ -6,6 +6,11 @@
 @layer base {
   :root {
     --color-primary: #ff4f29;
+    --color-secondary: #292c33;
+    --color-secondary-background: #F8F9FB;
+    --color-secondary-foreground: #FFFFFF;
+    --color-secondary-icon: #808080;
+    --color-secondary-text: #737580;
   }
 }
 

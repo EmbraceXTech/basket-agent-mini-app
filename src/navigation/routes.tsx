@@ -7,6 +7,7 @@ import { ThemeParamsPage } from "@/pages/TestPage/ThemeParamsPage";
 import MainPage from "@/pages/MainPage";
 import CreatePage from "@/pages/CreatePage";
 import ManagePage from "@/pages/ManagePage";
+import AssetPage from "@/pages/AssetPage";
 
 interface Route {
   path: string;
@@ -27,6 +28,10 @@ export const routes: Route[] = [
   {
     path: "/manage/:id",
     element: <ManagePage />,
+  },
+  {
+    path: "/assets/:id",
+    element: <AssetPage />,
   },
   {
     path: "/test/index",

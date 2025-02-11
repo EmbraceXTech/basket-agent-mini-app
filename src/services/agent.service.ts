@@ -7,7 +7,7 @@ import {
   IAgentResponse,
   IAgentWalletBalance,
   IAgentWalletBalanceResponse,
-} from "@/interfaces/agent";
+} from "@/interfaces/agent.d";
 
 const createAgent = async (data: IAgentRequest) => {
   try {
@@ -86,6 +86,24 @@ const getAgentWalletBalance = async (agentId: number): Promise<IAgentWalletBalan
   }
 };
 
-const agentApi = { createAgent, getAgents, toggleStartPause, getAgentId, getAgentWalletBalance };
+const terminateAgent = async (agentId: number) => {
+  try {
+    // await axiosInstance.delete(`/agent/${agentId}`);
+    console.log(`terminate agent ${agentId}`);
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+const agentApi = {
+  createAgent,
+  getAgents,
+  toggleStartPause,
+  getAgentId,
+  getAgentWalletBalance,
+  terminateAgent,
+};
 
 export default agentApi;

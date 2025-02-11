@@ -26,6 +26,8 @@ export interface IAgentResponse {
   isRunning: boolean;
   endDate: Date | null;
   createdAt: string;
+  pnl?: number;
+  usdBalance?: number;
 }
 
 export interface IAgentInfoResponse {
@@ -47,11 +49,11 @@ export interface IAgentInfoResponse {
   };
 }
 
-export interface IAgent extends IAgentResponse {
+export interface IAgent extends Omit<IAgentResponse, 'selectedTokens'> {
   selectedTokens: IToken[];
 }
 
-export interface IAgentInfo extends IAgentInfoResponse {
+export interface IAgentInfo extends Omit<IAgentInfoResponse, 'selectedTokens'> {
   selectedTokens: IToken[];
 }
 
