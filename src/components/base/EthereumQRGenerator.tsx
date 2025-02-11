@@ -34,7 +34,7 @@ function QRCodeGenerator({
     : `https://metamask.app.link/send/pay-${tokenAddress}@${chainId}/transfer?address=${toAddress}`;
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <QRCodeCanvas value={deeplink} size={200} />
+      <QRCodeCanvas value={deeplink} size={200} fgColor="#ff4f29" />
     </div>
   );
 }
