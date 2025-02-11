@@ -10,9 +10,12 @@ import Header from "@/components/layout/Header";
 import agentApi from "@/services/agent.service";
 import AgentCard from "@/components/agent/AgentCard";
 import { Spinner } from "@heroui/react";
+import useStepperStore from "@/stores/createAgent.store";
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const { reset } = useStepperStore();
+
 
   const {
     data: agents,
@@ -24,8 +27,11 @@ export default function MainPage() {
   });
 
   const handleNavigateToCreate = useCallback(
-    () => navigate("/create"),
-    [navigate]
+    () => {
+      reset();
+      navigate("/create");
+    },
+    [navigate, reset]
   );
 
   const AgentList = useMemo(() => {
@@ -40,7 +46,7 @@ export default function MainPage() {
 
     if (!agents || agents.length === 0) {
       return (
-        <div className="flex flex-col items-center justify-center h-full gap-4">
+        <>
           <div className="text-sm text-secondary-text">
             You haven't created any trading bot.
           </div>
@@ -52,12 +58,12 @@ export default function MainPage() {
           >
             Create Agent
           </Button>
-        </div>
+        </>
       );
     }
 
     return (
-      <div className="space-y-4">
+      <>
         {agents &&
           agents.map((agent) => (
             <AgentCard
@@ -66,7 +72,7 @@ export default function MainPage() {
               onToggleStartPause={toggleStartPause}
             />
           ))}
-      </div>
+      </>
     );
   }, [agents, handleNavigateToCreate, refetch]);
 
@@ -83,7 +89,9 @@ export default function MainPage() {
             <div className="text-sm">Loading...</div>
           </div>
         ) : (
-          <div className="flex-1 h-full">{AgentList}</div>
+          <div className="flex-1 h-full flex flex-col gap-4 items-center justify-center">
+            {AgentList}
+          </div>
         )}
         <Button
           startContent={<PlusCircleIcon className="w-4 h-4" />}

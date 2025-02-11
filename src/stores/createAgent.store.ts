@@ -1,4 +1,4 @@
-import { IAgentRequest } from "@/interfaces/agent";
+import { IAgentRequest } from "@/interfaces/agent.d";
 import { create } from "zustand";
 
 interface StepperState {
@@ -14,6 +14,7 @@ interface StepperState {
   // form
   data: Partial<IAgentRequest>;
   setData: (data: Partial<IAgentRequest>) => void;
+  reset: () => void;
 }
 
 const useStepperStore = create<StepperState>((set, get) => ({
@@ -52,6 +53,13 @@ const useStepperStore = create<StepperState>((set, get) => ({
         ...get().data,
         ...data,
       },
+    }),
+  // reset
+  reset: () =>
+    set({
+      currentStep: 0,
+      canNext: false,
+      data: {},
     }),
 }));
 

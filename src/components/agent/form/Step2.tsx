@@ -1,6 +1,7 @@
 import useStepperStore from "@/stores/createAgent.store";
 import { RadioGroup, Radio, cn, RadioProps, Textarea } from "@heroui/react";
 import { useEffect } from "react";
+import FormHeader from "./FormHeader";
 
 interface CustomRadioProps extends RadioProps {
   children: React.ReactNode;
@@ -14,10 +15,12 @@ export const CustomRadio = (props: CustomRadioProps) => {
       {...otherProps}
       classNames={{
         base: cn(
-          "inline-flex m-0 bg-content1 hover:bg-content2 items-center justify-between",
-          "flex-row-reverse max-w-[300px] cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
-          "data-[selected=true]:border-primary"
+          "flex m-0 bg-content1 hover:bg-content2 items-center justify-between flex-1",
+          "flex-row-reverse cursor-pointer rounded-lg gap-4 p-4 border-1 border-[#E9E9E9]",
+          "data-[selected=true]:border-primary",
+          "w-full"
         ),
+        labelWrapper: "w-screen",
       }}
     >
       {children}
@@ -54,13 +57,17 @@ export default function Step2() {
     } else {
       setCanNext(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data.strategy, canNext]);
   return (
     <div>
+      <FormHeader
+        title="Select Preset Strategy"
+        description="Choose one of the templates or create a custom one with prompt."
+      />
       <RadioGroup
-        // description="Selected plan can be changed at any time."
-        // label="Plans"
+      // description="Selected plan can be changed at any time."
+      // label="Plans"
       >
         {strategySets.map((strategy) => (
           <CustomRadio
@@ -76,12 +83,14 @@ export default function Step2() {
         ))}
       </RadioGroup>
       <Textarea
-        label="Custom Strategy"
-        placeholder="Enter your custom strategy"
+        // label="Custom Strategy"
+        placeholder="Input your prompt strategy"
         value={data.strategy}
+        className="mt-3"
         onChange={(e) => {
           setData({ strategy: e.target.value });
         }}
+        minRows={8}
       />
     </div>
   );

@@ -28,7 +28,7 @@ export default function AgentCard({
 
   return (
     <div
-      className="bg-white rounded-lg p-4 border border-gray-200 flex flex-col space-y-6"
+      className="bg-white rounded-lg p-4 border border-gray-200 flex flex-col space-y-6 w-full"
       onClick={() => navigate(`/assets/${agent.id}`)}
     >
       <div className="flex justify-between items-center">
