@@ -27,7 +27,6 @@ export interface IAgentResponse {
   endDate: Date | null;
   createdAt: string;
   pnl?: number;
-  usdBalance?: number;
 }
 
 export interface IAgentInfoResponse {
@@ -51,17 +50,11 @@ export interface IAgentInfoResponse {
 
 export interface IAgent extends Omit<IAgentResponse, 'selectedTokens'> {
   selectedTokens: IToken[];
+  totalBalance?: number;
+  chainInfo?: IChain;
 }
 
 export interface IAgentInfo extends Omit<IAgentInfoResponse, 'selectedTokens'> {
   selectedTokens: IToken[];
 }
 
-export interface IAgentWalletBalanceResponse {
-  balances: Array<Array<string>>;
-}
-
-export interface IAgentWalletBalance {
-  tokenSymbol: string;
-  balance: string;
-}

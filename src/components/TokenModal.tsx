@@ -1,5 +1,5 @@
 import { IAgent } from "@/interfaces/agent";
-import agentApi from "@/services/agent.service";
+import tokenApi from "@/services/token.service";
 import {
   Button,
   Modal,
@@ -21,7 +21,7 @@ export default function TokenModal({
 }) {
   const { data: walletBalances, isLoading } = useQuery({
     queryKey: ["agent-wallet-balance", agent?.id],
-    queryFn: () => agentApi.getAgentWalletBalance(agent?.id ?? 0),
+    queryFn: () => tokenApi.getTokenBalance(agent?.id?.toString() ?? ""),
     enabled: !!agent?.id,
   });
   return (
@@ -40,13 +40,13 @@ export default function TokenModal({
               {isLoading ? (
                 <div>Loading...</div>
               ) : (
-                walletBalances?.map((walletBalance) => (
+                walletBalances?.tokens?.map((token) => (
                   <div
                     className="flex justify-between items-center gap-2"
-                    key={walletBalance.tokenSymbol}
-                >
-                  <div>{walletBalance.tokenSymbol}</div>
-                  <div>{walletBalance.balance}</div>
+                    key={token[0]}
+                  >
+                    <div>{token[0]}</div>
+                    <div>{token[1]}</div>
                   </div>
                 ))
               )}

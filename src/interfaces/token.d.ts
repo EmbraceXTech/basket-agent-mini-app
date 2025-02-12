@@ -20,3 +20,18 @@ export interface ITokenAvailable {
   eip2612: boolean;
   tags: string[];
 }
+
+export interface IAgentWalletBalanceResponse {
+  tokens: [string, string][]; // [tokenSymbol, balanceToken]
+  balance: number;
+}
+export interface IAgentWalletBalance extends IAgentWalletBalanceResponse {
+  balanceUsd?: [string, number][]; // [tokenSymbol, balanceUsd]
+  tokenInfo?: ITokenAvailable[];
+}
+export interface ITokenPriceResponse {
+  token: string;
+  price: number;
+  source: string;
+  quote: string;
+}

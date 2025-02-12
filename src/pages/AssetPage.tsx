@@ -1,4 +1,3 @@
-import { ClockIcon } from "@heroicons/react/24/outline";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@heroui/react";
@@ -15,15 +14,15 @@ export default function AssetPage() {
   const { id } = useParams();
   const { data: tokenBalances, isLoading } = useQuery({
     queryKey: ["tokenBalances", id],
-    queryFn: () => tokenApi.getTokenBalance(id || ""),
+    queryFn: () =>
+      tokenApi.getTokenBalance(id || "", {
+        addUsdBalance: true,
+        addTokenInfo: true,
+      }),
   });
 
-  const totalUsdBalance = useMemo(() => {
-    return tokenBalances?.reduce((acc, cur) => acc + cur.balanceUsd, 0);
-  }, [tokenBalances]);
-
   const TokenList = useMemo(() => {
-    if (!tokenBalances || tokenBalances.length === 0) {
+    if (!tokenBalances) {
       return (
         <div className="text-sm text-center flex-1 flex justify-center items-center">
           Token not found
@@ -33,9 +32,14 @@ export default function AssetPage() {
 
     return (
       <div className="flex flex-col space-y-4">
-        {tokenBalances.map((token) => (
-          <TokenCard key={token.tokenSymbol} token={token} />
-        ))}
+        {tokenBalances.tokens.map((token, key) => {
+          const tokenInfo = tokenBalances.tokenInfo?.[key];
+          const balanceUsd = tokenBalances.balanceUsd?.[key] ?? [token[0], 0];
+          if (!tokenInfo) {
+            return null;
+          }
+          return <TokenCard key={key} token={token} tokenInfo={tokenInfo} balanceUsd={balanceUsd} />;
+        })}
       </div>
     );
   }, [tokenBalances]);
@@ -43,13 +47,13 @@ export default function AssetPage() {
   return (
     <Page back={true}>
       <div className="w-full min-h-screen p-4 flex flex-col">
-        <Header title="My Assets" right={<ClockIcon className="w-6 h-6" />} />
+        <Header title="My Assets" />
         <p className="text-center text-xs text-secondary-text">Total Balance</p>
         {isLoading ? (
           <Spinner />
         ) : (
           <div className="text-center text-3xl">
-            {formatUSD(totalUsdBalance)}
+            {formatUSD(tokenBalances?.balance ?? 0)}
           </div>
         )}
         <div className="font-medium mt-6 mb-3">Tokens</div>

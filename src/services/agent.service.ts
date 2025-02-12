@@ -5,9 +5,10 @@ import {
   IAgentInfoResponse,
   IAgentRequest,
   IAgentResponse,
-  IAgentWalletBalance,
-  IAgentWalletBalanceResponse,
 } from "@/interfaces/agent.d";
+import tokenApi from "./token.service";
+import chainApi from "./chain.service";
+import { IChain } from "@/interfaces/chain";
 
 const createAgent = async (data: IAgentRequest) => {
   try {
@@ -29,12 +30,50 @@ const createAgent = async (data: IAgentRequest) => {
   }
 };
 
-const getAgents = async (): Promise<IAgent[]> => {
+const getAgents = async (
+  {
+    includeTotalBalance,
+    includeChainInfo,
+  }: { includeTotalBalance?: boolean; includeChainInfo?: boolean } = {
+    includeTotalBalance: false,
+    includeChainInfo: false,
+  }
+): Promise<IAgent[]> => {
   try {
     const response = await axiosInstance.get<IAgentResponse[]>("/agent");
+
+    let chainInfo: IChain[] = [];
+
+    if (includeChainInfo) {
+      chainInfo = await chainApi.getChainAvailable();
+    }
+
+    if (includeTotalBalance) {
+      const agentsWithTotalBalance = await Promise.all(
+        response.data.map(async (agent) => {
+          const tokenBalances = await tokenApi.getTokenBalance(
+            agent.id.toString()
+          );
+          return {
+            ...agent,
+            selectedTokens: agent.selectedTokens.map((token) =>
+              JSON.parse(token)
+            ),
+            totalBalance: tokenBalances.balance,
+            chainInfo: chainInfo.find(
+              (chain) => chain.chainId.toString() === agent.chainId
+            ),
+          };
+        })
+      );
+      return agentsWithTotalBalance;
+    }
     return response.data.map((agent) => ({
       ...agent,
       selectedTokens: agent.selectedTokens.map((token) => JSON.parse(token)),
+      chainInfo: chainInfo.find(
+        (chain) => chain.chainId.toString() === agent.chainId
+      ),
     }));
   } catch (error) {
     console.error(error);
@@ -70,22 +109,6 @@ const getAgentId = async (agentId: number): Promise<IAgentInfo> => {
   }
 };
 
-const getAgentWalletBalance = async (agentId: number): Promise<IAgentWalletBalance[]> => {
-  try {
-    const response = await axiosInstance.get<IAgentWalletBalanceResponse>(
-      `/agent/${agentId}/wallet/balance`
-    );
-    console.log(response.data);
-    return response.data.balances.map((balance) => ({
-      tokenSymbol: balance[0],
-      balance: balance[1],
-    }));
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
 const terminateAgent = async (agentId: number) => {
   try {
     // await axiosInstance.delete(`/agent/${agentId}`);
@@ -102,7 +125,6 @@ const agentApi = {
   getAgents,
   toggleStartPause,
   getAgentId,
-  getAgentWalletBalance,
   terminateAgent,
 };
 

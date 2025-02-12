@@ -16,23 +16,19 @@ export default function MainPage() {
   const navigate = useNavigate();
   const { reset } = useStepperStore();
 
-
   const {
     data: agents,
     isLoading,
     refetch,
   } = useQuery({
     queryKey: ["agents"],
-    queryFn: () => agentApi.getAgents(),
+    queryFn: () => agentApi.getAgents({ includeTotalBalance: true, includeChainInfo: true }),
   });
 
-  const handleNavigateToCreate = useCallback(
-    () => {
-      reset();
-      navigate("/create");
-    },
-    [navigate, reset]
-  );
+  const handleNavigateToCreate = useCallback(() => {
+    reset();
+    navigate("/create");
+  }, [navigate, reset]);
 
   const AgentList = useMemo(() => {
     const toggleStartPause = async (agentId: number) => {
@@ -46,7 +42,7 @@ export default function MainPage() {
 
     if (!agents || agents.length === 0) {
       return (
-        <>
+        <div className="flex-1 h-full flex flex-col gap-4 items-center justify-center">
           <div className="text-sm text-secondary-text">
             You haven't created any trading bot.
           </div>
@@ -58,12 +54,12 @@ export default function MainPage() {
           >
             Create Agent
           </Button>
-        </>
+        </div>
       );
     }
 
     return (
-      <>
+      <div className="flex-1">
         {agents &&
           agents.map((agent) => (
             <AgentCard
@@ -72,7 +68,7 @@ export default function MainPage() {
               onToggleStartPause={toggleStartPause}
             />
           ))}
-      </>
+      </div>
     );
   }, [agents, handleNavigateToCreate, refetch]);
 
@@ -89,9 +85,9 @@ export default function MainPage() {
             <div className="text-sm">Loading...</div>
           </div>
         ) : (
-          <div className="flex-1 h-full flex flex-col gap-4 items-center justify-center">
-            {AgentList}
-          </div>
+          // <div className="flex-1 h-full flex flex-col gap-4 items-center justify-center">
+          AgentList
+          // </div>
         )}
         <Button
           startContent={<PlusCircleIcon className="w-4 h-4" />}

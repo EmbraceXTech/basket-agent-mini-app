@@ -1,10 +1,10 @@
 import { Button } from "@heroui/button";
 import { useNavigate } from "react-router-dom";
-import { PlayIcon, PauseIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PauseIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/solid";
 import { Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { useMemo, useState } from "react";
 
-import { CHAIN_LIST } from "@/constants/chain.constant";
 import { formatUSD, formatPercent } from "@/utils/format.util";
 import type { IAgent } from "@/interfaces/agent.d";
 import TerminateModal from "./modal/TerminateModal";
@@ -26,24 +26,24 @@ export default function AgentCard({
     return agent.pnl === undefined || agent.pnl === null || agent.pnl >= 0;
   }, [agent.pnl]);
 
+  console.log(agent);
+
   return (
     <div
       className="bg-white rounded-lg p-4 border border-gray-200 flex flex-col space-y-6 w-full"
-      onClick={() => navigate(`/assets/${agent.id}`)}
+      // onClick={() => navigate(`/assets/${agent.id}`)}
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          {CHAIN_LIST[agent.chainId as keyof typeof CHAIN_LIST]?.imageUrl ? (
+          {agent.chainId ? (
             <img
-              src={
-                CHAIN_LIST[agent.chainId as keyof typeof CHAIN_LIST]?.imageUrl
-              }
-              alt={agent.name}
+              src={agent.chainInfo?.iconUrl}
+              alt={agent.chainInfo?.name}
               className="w-10 h-10 rounded-full"
             />
           ) : (
             <div className="w-10 h-10 rounded-full bg-gray-200 flex justify-center items-center">
-              {agent.chainId}
+              {agent.chainInfo?.name}
             </div>
           )}
           <div>
@@ -75,7 +75,9 @@ export default function AgentCard({
         <div className="text-sm text-gray-500">Total Balance</div>
         <div className="text-sm text-gray-500">Current Profit</div>
         <div className="text-xl">
-          {agent?.usdBalance ? `$${formatUSD(agent.usdBalance)} USD` : "$0.00"}
+          {agent?.totalBalance
+            ? `${formatUSD(agent.totalBalance)} USD`
+            : "$0.00"}
         </div>
         <div
           className={`text-xl ${
@@ -94,13 +96,13 @@ export default function AgentCard({
           className="rounded-full font-semibold flex-1 bg-secondary-background text-secondary"
           startContent={
             agent.isRunning ? (
-              <PlayIcon className="w-5 h-5" strokeWidth={4} />
-            ) : (
               <PauseIcon className="w-5 h-5" strokeWidth={4} />
+            ) : (
+              <PlayIcon className="w-5 h-5" strokeWidth={4} />
             )
           }
         >
-          {agent.isRunning ? "Start" : "Pause"}
+          {agent.isRunning ? "Pause" : "Start"}
         </Button>
         <Button
           variant="flat"
