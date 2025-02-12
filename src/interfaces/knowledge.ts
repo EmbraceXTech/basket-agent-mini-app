@@ -15,3 +15,10 @@ export interface IKnowledgeResponse {
   content: string;
   createdAt: string;
 }
+
+export interface IKnowledge {
+  id: number;
+  agentId: number;
+  name: string;
+  content: string;
+}

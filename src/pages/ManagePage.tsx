@@ -9,6 +9,7 @@ import ManageSettings from "@/components/manage/Settings";
 import { useQuery } from "@tanstack/react-query";
 import agentApi from "@/services/agent.service";
 import { useState } from "react";
+import { IKnowledge } from "@/interfaces/knowledge";
 
 export default function ManagePage() {
   const { id } = useParams();
@@ -17,8 +18,14 @@ export default function ManagePage() {
     queryKey: ["agentInfo", id],
     queryFn: () => agentApi.getAgentId(+(id || 0)),
   });
+  const [knowledgeBase, setKnowledgeBase] = useState<IKnowledge[]>(
+    agentInfo?.knowledge ?? []
+  );
   const handleSaveKnowledge = () => {
-    console.log("save knowledge");
+    console.log("save knowledge", knowledgeBase);
+  };
+  const handleSaveSettings = () => {
+    console.log("save settings");
   };
   if (!id) {
     return <div>Agent ID is required</div>;
@@ -28,7 +35,7 @@ export default function ManagePage() {
   }
   return (
     <Page back={true}>
-      <div className="w-full h-screen p-4 flex flex-col">
+      <div className="w-full min-h-screen p-4 pb-6 flex flex-col">
         <Header title={`AI Agent Settings`} />
         <div className="flex-1">
           {isLoading ? (
@@ -48,7 +55,10 @@ export default function ManagePage() {
                 <ManageAsset agentInfo={agentInfo} />
               </Tab>
               <Tab key="knowledge" title="Knowledge">
-                <ManageKnowledge />
+                <ManageKnowledge
+                  agentInfo={agentInfo}
+                  setKnowledgeBase={setKnowledgeBase}
+                />
               </Tab>
               <Tab key="settings" title="Settings">
                 <ManageSettings agentInfo={agentInfo} />
@@ -58,9 +68,11 @@ export default function ManagePage() {
         </div>
         {tab !== "deposit" && (
           <Button
-            className="bg-[#FF4F29] rounded-full text-white"
+            className="bg-[#FF4F29] rounded-full text-white p-4 w-full"
             variant="solid"
-            onPress={handleSaveKnowledge}
+            onPress={
+              tab === "knowledge" ? handleSaveKnowledge : handleSaveSettings
+            }
           >
             Save
           </Button>

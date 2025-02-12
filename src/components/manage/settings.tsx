@@ -28,16 +28,24 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
 
     fetchTokens();
   }, [agentInfo?.chainId]);
-  const [strategy, setStrategy] = useState("");
+  const [strategy, setStrategy] = useState(agentInfo.strategy ?? "");
   const [tackProfit, setTackProfit] = useState("");
   const [stopLoss, setStopLoss] = useState("");
 
-  const [intervalSet, setIntervalSet] = useState({
-    interval: "1",
-    intervalUnit: "hour",
-  });
-  const [endDate, setEndDate] = useState<ZonedDateTime | null>(
-    now(getLocalTimeZone())
+  const [intervalSet, setIntervalSet] = useState(
+    agentInfo.intervalSeconds
+      ? {
+          interval: `${agentInfo.intervalSeconds / 60 / 60}`,
+          intervalUnit: "hour",
+        }
+      : {
+          interval: "",
+          intervalUnit: "hour",
+        }
+  );
+
+  const [endDate, setEndDate] = useState<ZonedDateTime | Date | null>(
+    agentInfo.endDate ? new Date(agentInfo.endDate) : null
   );
   useEffect(() => {
     if (intervalSet.interval && intervalSet.intervalUnit) {
@@ -59,8 +67,9 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intervalSet]);
+  console.log(agentInfo);
   return (
-    <div>
+    <>
       {/* Choose tokens */}
       <Select
         className="w-full"
@@ -104,11 +113,7 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
         {tokenList.map((token) => (
           <SelectItem key={token.address} value={token.address}>
             <div className="flex space-x-3">
-              <img
-                className="w-6 h-6"
-                src={token.logoURI}
-                alt={token.symbol}
-              />
+              <img className="w-6 h-6" src={token.logoURI} alt={token.symbol} />
               <p>{token.symbol}</p>
             </div>
           </SelectItem>
@@ -195,6 +200,6 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
           onChange={(e) => setEndDate(e)}
         />
       </div>
-    </div>
+    </>
   );
 }
