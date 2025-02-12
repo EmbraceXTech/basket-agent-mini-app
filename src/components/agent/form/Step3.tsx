@@ -78,7 +78,7 @@ export default function Step3() {
         <div className="text-[#AEB2BD] text-xs col-span-2"></div>
         {knowledgeBase.map((knowledge) => (
           <>
-            <div key={knowledge.id} className="col-span-1">
+            <div key={knowledge.id} className="col-span-1 flex items-center">
               {knowledge.id}
             </div>
             <Input
@@ -95,7 +95,7 @@ export default function Step3() {
               }
               className="col-span-3"
             />
-            <div className="col-span-1 flex w-fit">
+            <div className="col-span-2 flex w-fit">
               <Button
                 onPress={() => handleDeleteKnowledge(knowledge.id)}
                 // isIconOnly

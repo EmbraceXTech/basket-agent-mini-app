@@ -1,23 +1,25 @@
 import { useParams } from "react-router-dom";
-import { Tabs, Tab, Spinner } from "@heroui/react";
+import { Tabs, Tab, Spinner, Button } from "@heroui/react";
 
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
-import ManageAsset from "@/components/manage/asset";
-import ManageKnowledge from "@/components/manage/knowledge";
-import ManageSettings from "@/components/manage/settings";
+import ManageAsset from "@/components/manage/Asset";
+import ManageKnowledge from "@/components/manage/Knowledge";
+import ManageSettings from "@/components/manage/Settings";
 import { useQuery } from "@tanstack/react-query";
 import agentApi from "@/services/agent.service";
+import { useState } from "react";
 
 export default function ManagePage() {
   const { id } = useParams();
+  const [tab, setTab] = useState("deposit");
   const { data: agentInfo, isLoading } = useQuery({
     queryKey: ["agentInfo", id],
     queryFn: () => agentApi.getAgentId(+(id || 0)),
   });
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const handleSaveKnowledge = () => {
+    console.log("save knowledge");
+  };
   if (!id) {
     return <div>Agent ID is required</div>;
   }
@@ -35,7 +37,13 @@ export default function ManagePage() {
               <div className="text-sm">Loading...</div>
             </div>
           ) : (
-            <Tabs aria-label="Tabs radius" radius="full" fullWidth>
+            <Tabs
+              aria-label="Tabs radius"
+              radius="full"
+              fullWidth
+              selectedKey={tab}
+              onSelectionChange={(key) => setTab(key as string)}
+            >
               <Tab key="deposit" title="Deposit">
                 <ManageAsset agentInfo={agentInfo} />
               </Tab>
@@ -48,6 +56,15 @@ export default function ManagePage() {
             </Tabs>
           )}
         </div>
+        {tab !== "deposit" && (
+          <Button
+            className="bg-[#FF4F29] rounded-full text-white"
+            variant="solid"
+            onPress={handleSaveKnowledge}
+          >
+            Save
+          </Button>
+        )}
       </div>
     </Page>
   );
