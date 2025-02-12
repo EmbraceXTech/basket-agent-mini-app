@@ -51,7 +51,7 @@ export default function ManagePage() {
                 <ManageKnowledge />
               </Tab>
               <Tab key="settings" title="Settings">
-                <ManageSettings />
+                <ManageSettings agentInfo={agentInfo} />
               </Tab>
             </Tabs>
           )}

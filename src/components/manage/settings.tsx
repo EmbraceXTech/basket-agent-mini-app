@@ -1,23 +1,36 @@
 import { Input, Select, SelectItem, Textarea, DatePicker } from "@heroui/react";
 import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
-import { TOKEN_LIST } from "@/constants/token.constant";
-import { DEFAULT_CHAIN_ID } from "@/constants/chain.constant";
-import { useEffect, useMemo, useState } from "react";
-import { IToken } from "@/interfaces/token";
+import { useEffect, useState } from "react";
+import { IToken, ITokenAvailable } from "@/interfaces/token";
+import { IAgent } from "@/interfaces/agent";
+import tokenApi from "@/services/token.service";
 
-export default function ManageSettings() {
+export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
   const [chooseTokens, setChooseTokens] = useState<IToken[]>([]);
+  const [tokenList, setTokenList] = useState<ITokenAvailable[]>([]);
+  const [isLoadingTokens, setIsLoadingTokens] = useState(false);
+
+  useEffect(() => {
+    const fetchTokens = async () => {
+      if (!agentInfo?.chainId) return;
+      setIsLoadingTokens(true);
+      try {
+        const tokens = await tokenApi.getTokenAvailable(
+          agentInfo.chainId || ""
+        );
+        setTokenList(tokens);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingTokens(false);
+      }
+    };
+
+    fetchTokens();
+  }, [agentInfo?.chainId]);
   const [strategy, setStrategy] = useState("");
   const [tackProfit, setTackProfit] = useState("");
   const [stopLoss, setStopLoss] = useState("");
-  const tokens = useMemo(() => {
-    const _tokens = TOKEN_LIST[DEFAULT_CHAIN_ID].map((token) => ({
-      tokenSymbol: token.symbol,
-      tokenAddress: token.address,
-      ...token,
-    }));
-    return _tokens || [];
-  }, []);
 
   const [intervalSet, setIntervalSet] = useState({
     interval: "1",
@@ -54,13 +67,14 @@ export default function ManageSettings() {
         // disabledKeys={data.selectedTokens?.map((token) => token.tokenAddress)}
         label="Choose tokens"
         selectionMode="multiple"
+        isLoading={isLoadingTokens}
         onSelectionChange={(keys) => {
           const selectedOptions = Array.from(keys);
-          const selectedTokens = tokens
-            .filter((token) => selectedOptions.includes(token.tokenAddress))
+          const selectedTokens = tokenList
+            ?.filter((token) => selectedOptions.includes(token.address))
             .map((token) => ({
-              tokenSymbol: token.tokenSymbol,
-              tokenAddress: token.tokenAddress,
+              tokenSymbol: token.symbol,
+              tokenAddress: token.address,
             }));
           setChooseTokens(selectedTokens);
         }}
@@ -68,18 +82,17 @@ export default function ManageSettings() {
           return (
             <div className="flex gap-2 overflow-x-auto">
               {items.map((item) => {
-                console.log(item);
-                const token = tokens.find(
-                  (token) => token.tokenAddress === item.key
+                const token = tokenList?.find(
+                  (token) => token.address === item.key
                 );
                 return (
                   <div key={item.key} className="flex items-center gap-2">
                     <img
-                      src={token?.imageUrl}
+                      src={token?.logoURI}
                       alt={token?.symbol}
                       className="w-4 h-4"
                     />
-                    <p>{token?.tokenSymbol}</p>
+                    <p>{token?.symbol}</p>
                   </div>
                 );
               })}
@@ -88,15 +101,15 @@ export default function ManageSettings() {
         }}
         selectedKeys={chooseTokens.map((token) => token.tokenAddress)}
       >
-        {tokens.map((token) => (
-          <SelectItem key={token.tokenAddress} value={token.tokenAddress}>
+        {tokenList.map((token) => (
+          <SelectItem key={token.address} value={token.address}>
             <div className="flex space-x-3">
               <img
                 className="w-6 h-6"
-                src={token.imageUrl}
-                alt={token.tokenSymbol}
+                src={token.logoURI}
+                alt={token.symbol}
               />
-              <p>{token.tokenSymbol}</p>
+              <p>{token.symbol}</p>
             </div>
           </SelectItem>
         ))}
