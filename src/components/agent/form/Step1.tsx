@@ -1,27 +1,54 @@
 import { Input, Select, SelectItem } from "@heroui/react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 
-import { CHAIN_LIST } from "@/constants/chain.constant";
-import { TOKEN_LIST } from "@/constants/token.constant";
 import useStepperStore from "@/stores/createAgent.store";
+import chainApi from "@/services/chain.service";
+import tokenApi from "@/services/token.service";
+import { IChain } from "@/interfaces/chain";
 
 import FormHeader from "./FormHeader";
+import { ITokenAvailable } from "@/interfaces/token";
 
 export default function Step1() {
   const { data, setData, setCanNext, canNext } = useStepperStore();
-  const chains = Object.values(CHAIN_LIST).map((chain) => ({
-    label: chain.chainName,
-    ...chain,
-  }));
-  const tokens = useMemo(() => {
-    const _tokens = TOKEN_LIST[
-      (data.chainId as keyof typeof TOKEN_LIST) || "8453"
-    ].map((token) => ({
-      tokenSymbol: token.symbol,
-      tokenAddress: token.address,
-      ...token,
-    }));
-    return _tokens || [];
+
+  const [chains, setChains] = useState<IChain[]>([]);
+  const [isLoadingChains, setIsLoadingChains] = useState(true);
+
+  useEffect(() => {
+    const fetchChains = async () => {
+      try {
+        const data = await chainApi.getChainAvailable();
+        setChains(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingChains(false);
+      }
+    };
+
+    fetchChains();
+  }, []);
+
+  const [tokens, setTokens] = useState<ITokenAvailable[]>([]);
+  const [isLoadingTokens, setIsLoadingTokens] = useState(false);
+
+  useEffect(() => {
+    if (!data.chainId) return;
+
+    const fetchTokens = async () => {
+      setIsLoadingTokens(true);
+      try {
+        const tokens = await tokenApi.getTokenAvailable(data.chainId || "");
+        setTokens(tokens);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingTokens(false);
+      }
+    };
+
+    fetchTokens();
   }, [data.chainId]);
 
   useEffect(() => {
@@ -46,40 +73,37 @@ export default function Step1() {
         <Select
           className="w-full"
           disabledKeys={chains
-            .filter((chain) => chain.chainId === (data.chainId || ""))
-            .map((chain) => chain.chainId)}
+            ?.filter((chain) => chain.chainId === +(data.chainId || -1))
+            .map((chain) => chain.chainId.toString())}
           label="Choose a network"
           onChange={(e) => {
             setData({ chainId: e.target.value, selectedTokens: [] });
           }}
           renderValue={(items) => {
-            const chain = chains.find(
-              (chain) => chain.chainId === items[0].key
+            const chain = chains?.find(
+              (chain) => chain.chainId.toString() === items[0].key?.toString()
             );
             return (
               <div className="flex items-center gap-2">
                 <img
-                  src={chain?.imageUrl}
-                  alt={chain?.chainName}
+                  src={chain?.iconUrl}
+                  alt={chain?.name}
                   className="w-4 h-4"
                 />
-                <p>{chain?.label}</p>
+                <p>{chain?.name}</p>
               </div>
             );
           }}
+          isLoading={isLoadingChains}
         >
-          {chains.map((chain) => (
+          {chains?.map((chain) => (
             <SelectItem key={chain.chainId} value={chain.chainId}>
               <div className="flex items-center gap-2">
-                <img
-                  src={chain.imageUrl}
-                  alt={chain.chainName}
-                  className="w-4 h-4"
-                />
-                <p>{chain.label}</p>
+                <img src={chain.iconUrl} alt={chain.name} className="w-4 h-4" />
+                <p>{chain.name}</p>
               </div>
             </SelectItem>
-          ))}
+          )) || []}
         </Select>
         <Select
           className="w-full"
@@ -89,46 +113,49 @@ export default function Step1() {
           selectionMode="multiple"
           onSelectionChange={(keys) => {
             const selectedOptions = Array.from(keys);
-            const selectedTokens = tokens.filter((token) =>
-              selectedOptions.includes(token.tokenAddress)
-            );
+            const selectedTokens = tokens
+              ?.filter((token) => selectedOptions.includes(token.address))
+              .map((token) => ({
+                tokenSymbol: token.symbol,
+                tokenAddress: token.address,
+              }));
             setData({ selectedTokens });
           }}
           renderValue={(items) => {
             return (
               <div className="flex gap-2 overflow-x-auto">
                 {items.map((item) => {
-                  console.log(item);
-                  const token = tokens.find(
-                    (token) => token.tokenAddress === item.key
+                  const token = tokens?.find(
+                    (token) => token.address === item.key
                   );
                   return (
                     <div key={item.key} className="flex items-center gap-2">
                       <img
-                        src={token?.imageUrl}
+                        src={token?.logoURI}
                         alt={token?.symbol}
                         className="w-4 h-4"
                       />
-                      <p>{token?.tokenSymbol}</p>
+                      <p>{token?.symbol}</p>
                     </div>
                   );
                 })}
               </div>
             );
           }}
+          isLoading={isLoadingTokens}
         >
-          {tokens.map((token) => (
-            <SelectItem key={token.tokenAddress} value={token.tokenAddress}>
+          {tokens?.map((token) => (
+            <SelectItem key={token.address} value={token.address}>
               <div className="flex space-x-3">
                 <img
                   className="w-6 h-6"
-                  src={token.imageUrl}
+                  src={token.logoURI}
                   alt={token.symbol}
                 />
-                <p>{token.tokenSymbol}</p>
+                <p>{token.symbol}</p>
               </div>
             </SelectItem>
-          ))}
+          )) || []}
         </Select>
         <Input
           label="Agent Name"

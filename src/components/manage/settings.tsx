@@ -3,11 +3,10 @@ import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
 import { TOKEN_LIST } from "@/constants/token.constant";
 import { DEFAULT_CHAIN_ID } from "@/constants/chain.constant";
 import { useEffect, useMemo, useState } from "react";
+import { IToken } from "@/interfaces/token";
 
 export default function ManageSettings() {
-  const [chooseTokens, setChooseTokens] = useState<
-    (typeof TOKEN_LIST)[keyof typeof TOKEN_LIST]
-  >([]);
+  const [chooseTokens, setChooseTokens] = useState<IToken[]>([]);
   const [strategy, setStrategy] = useState("");
   const [tackProfit, setTackProfit] = useState("");
   const [stopLoss, setStopLoss] = useState("");
@@ -57,9 +56,12 @@ export default function ManageSettings() {
         selectionMode="multiple"
         onSelectionChange={(keys) => {
           const selectedOptions = Array.from(keys);
-          const selectedTokens = tokens.filter((token) =>
-            selectedOptions.includes(token.tokenAddress)
-          );
+          const selectedTokens = tokens
+            .filter((token) => selectedOptions.includes(token.tokenAddress))
+            .map((token) => ({
+              tokenSymbol: token.tokenSymbol,
+              tokenAddress: token.tokenAddress,
+            }));
           setChooseTokens(selectedTokens);
         }}
         renderValue={(items) => {
@@ -84,15 +86,15 @@ export default function ManageSettings() {
             </div>
           );
         }}
-        selectedKeys={chooseTokens.map((token) => token.address)}
+        selectedKeys={chooseTokens.map((token) => token.tokenAddress)}
       >
         {tokens.map((token) => (
-          <SelectItem key={token.address} value={token.address}>
+          <SelectItem key={token.tokenAddress} value={token.tokenAddress}>
             <div className="flex space-x-3">
               <img
                 className="w-6 h-6"
                 src={token.imageUrl}
-                alt={token.symbol}
+                alt={token.tokenSymbol}
               />
               <p>{token.tokenSymbol}</p>
             </div>

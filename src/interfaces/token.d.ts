@@ -10,3 +10,13 @@ export interface ITokenBalance {
   balanceUsd: number;
   pnl: number;
 }
+
+export interface ITokenAvailable {
+  address: string;
+  symbol: string;
+  decimals: number;
+  name: string;
+  logoURI: string;
+  eip2612: boolean;
+  tags: string[];
+}

@@ -1,4 +1,14 @@
-import { ITokenBalance } from "@/interfaces/token";
+import axiosInstance from "@/core/axios";
+import { ITokenAvailable, ITokenBalance } from "@/interfaces/token";
+
+const getTokenAvailable = async (
+  chainId: string
+): Promise<ITokenAvailable[]> => {
+  const response = await axiosInstance.get<ITokenAvailable[]>(
+    `/token/available-tokens?chainId=${chainId}`
+  );
+  return response.data;
+};
 
 const getTokenBalance = async (id: string): Promise<ITokenBalance[]> => {
   console.log(id);
@@ -22,6 +32,6 @@ const getTokenBalance = async (id: string): Promise<ITokenBalance[]> => {
   return response;
 };
 
-const tokenApi = { getTokenBalance };
+const tokenApi = { getTokenBalance, getTokenAvailable };
 
 export default tokenApi;
