@@ -5,10 +5,11 @@ import FormHeader from "./FormHeader";
 
 interface CustomRadioProps extends RadioProps {
   children: React.ReactNode;
+  iconPath?: string;
 }
 
 export const CustomRadio = (props: CustomRadioProps) => {
-  const { children, ...otherProps } = props;
+  const { children, description, iconPath, ...otherProps } = props;
 
   return (
     <Radio
@@ -23,7 +24,17 @@ export const CustomRadio = (props: CustomRadioProps) => {
         labelWrapper: "w-screen",
       }}
     >
-      {children}
+      <div className="flex items-center space-x-3">
+        {iconPath && (
+          <div className="rounded-full bg-[#FFF0F1] w-10 h-10 p-1 flex items-center justify-center">
+            <img src={iconPath} width={24} height={24} />
+          </div>
+        )}
+        <div>
+          {children}
+          <p className="text-xs text-gray-500">{description}</p>
+        </div>
+      </div>
     </Radio>
   );
 };
@@ -37,6 +48,7 @@ export default function Step2() {
       name: "Basket Trade1",
       description: "Basket Trade1 description",
       value: "basketTrade1",
+      iconPath: "/public/empty-bot.png",
     },
     {
       id: 2,
@@ -77,6 +89,7 @@ export default function Step2() {
             onChange={(e) => {
               setData({ strategy: e.target.value });
             }}
+            iconPath={strategy?.iconPath}
           >
             {strategy.name}
           </CustomRadio>

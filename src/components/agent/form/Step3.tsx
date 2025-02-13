@@ -1,12 +1,13 @@
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/react";
 import { useEffect, useState } from "react";
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 import { IKnowledgeRequest } from "@/interfaces/knowledge";
 import useStepperStore from "@/stores/createAgent.store";
+import { formatNumber } from "@/utils/format.util";
 
 import FormHeader from "./FormHeader";
-import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 // add knowledge base
 export default function Step3() {
@@ -79,7 +80,7 @@ export default function Step3() {
         {knowledgeBase.map((knowledge) => (
           <>
             <div key={knowledge.id} className="col-span-1 flex items-center">
-              {knowledge.id}
+              {formatNumber(knowledge.id)}
             </div>
             <Input
               value={knowledge.name}

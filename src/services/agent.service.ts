@@ -11,10 +11,13 @@ import chainApi from "./chain.service";
 import { IChain } from "@/interfaces/chain";
 
 const createAgent = async (data: IAgentRequest) => {
+  const knowledgeFilter = data.knowledges.filter(
+    (i) => i.content.length > 0 && i.content.length > 0
+  );
   try {
     const payload = {
       ...data,
-      knowledges: data.knowledges.map((knowledge) => ({
+      knowledges: knowledgeFilter.map((knowledge) => ({
         ...knowledge,
         content: knowledge.content,
       })),

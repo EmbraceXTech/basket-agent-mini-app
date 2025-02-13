@@ -20,9 +20,9 @@ export default function TokenCard({ token, tokenInfo, balanceUsd }: { token: [st
           className="w-10 h-10"
         />
         <div className="flex flex-col">
-          <div className="text-sm">{token[0]}</div>
+          <div className="text-sm">{tokenInfo?.name}</div>
           <div className="text-xs text-secondary-text">
-            {token[1]} {token[0]}
+            {token[1]} {token[0]?.toUpperCase()}
           </div>
         </div>
       </div>

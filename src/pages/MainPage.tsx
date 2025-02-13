@@ -5,6 +5,8 @@ import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
+import emptyBotIcon from "/public/empty-bot.png";
+
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
 import agentApi from "@/services/agent.service";
@@ -43,6 +45,7 @@ export default function MainPage() {
     if (!agents || agents.length === 0) {
       return (
         <div className="flex-1 h-full flex flex-col gap-4 items-center justify-center">
+          <img src={emptyBotIcon} alt="empty agent bot" width={94} height={94} />
           <div className="text-sm text-secondary-text">
             You haven't created any trading bot.
           </div>
@@ -74,7 +77,8 @@ export default function MainPage() {
 
   return (
     <Page back={false}>
-      <div className="w-full min-h-screen p-4 flex flex-col">
+      <div className="w-full min-h-screen p-4 flex flex-col relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#ff4f29]/0 to-[#ff4f29]/20 to-90% h-[200px] -z-10" />
         <Header
           title="Basket Agent"
           right={<ClockIcon className="w-6 h-6" />}

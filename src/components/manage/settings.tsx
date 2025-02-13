@@ -6,7 +6,9 @@ import { IAgent } from "@/interfaces/agent";
 import tokenApi from "@/services/token.service";
 
 export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
-  const [chooseTokens, setChooseTokens] = useState<IToken[]>([]);
+  const [chooseTokens, setChooseTokens] = useState<IToken[]>(
+    agentInfo.selectedTokens ?? []
+  );
   const [tokenList, setTokenList] = useState<ITokenAvailable[]>([]);
   const [isLoadingTokens, setIsLoadingTokens] = useState(false);
 
@@ -67,7 +69,6 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intervalSet]);
-  console.log(agentInfo);
   return (
     <>
       {/* Choose tokens */}
