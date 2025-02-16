@@ -1,9 +1,10 @@
-import localStorageUtil from "@/utils/localStorage.util";
 import axios from "axios";
 
+import env from "../env";
+import localStorageUtil from "@/utils/localStorage.util";
+
 const axiosInstance = axios.create({
-  baseURL:
-    import.meta.env.VITE_BACKEND_URL || "https://basket-api.satosheep.com",
+  baseURL: env.VITE_BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
