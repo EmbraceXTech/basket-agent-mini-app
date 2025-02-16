@@ -41,6 +41,13 @@ const getTokenBalance = async (
     );
     let balanceUsd: [string, number][] = [];
     let tokenInfo: ITokenAvailable[] = [];
+    if (response.data.tokens.length === 0) {
+      return {
+        ...response.data,
+        balanceUsd: [] as [string, number][],
+        tokenInfo: [] as ITokenAvailable[],
+      };
+    }
     if (addUsdBalance) {
       const tokenFocuses = response.data.tokens
         .map((token) => token[0].toUpperCase())

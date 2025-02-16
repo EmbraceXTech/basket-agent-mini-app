@@ -22,7 +22,7 @@ export default function AssetPage() {
   });
 
   const TokenList = useMemo(() => {
-    if (!tokenBalances) {
+    if (!tokenBalances || tokenBalances.tokens.length === 0) {
       return (
         <div className="text-sm text-center flex-1 flex justify-center items-center">
           Token not found
