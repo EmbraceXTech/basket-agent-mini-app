@@ -1,15 +1,18 @@
 import { useParams } from "react-router-dom";
 import { Tabs, Tab, Spinner, Button } from "@heroui/react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import agentApi from "@/services/agent.service";
+import { IKnowledge } from "@/interfaces/knowledge";
+import { IAgentRequest } from "@/interfaces/agent";
 
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
 import ManageAsset from "@/components/manage/Asset";
 import ManageKnowledge from "@/components/manage/Knowledge";
 import ManageSettings from "@/components/manage/Settings";
-import { useQuery } from "@tanstack/react-query";
-import agentApi from "@/services/agent.service";
-import { useState } from "react";
-import { IKnowledge } from "@/interfaces/knowledge";
+import toast from "react-hot-toast";
 
 export default function ManagePage() {
   const { id } = useParams();
@@ -21,34 +24,44 @@ export default function ManagePage() {
   const [knowledgeBase, setKnowledgeBase] = useState<IKnowledge[]>(
     agentInfo?.knowledge ?? []
   );
+  const [settings, setSettings] = useState<Partial<IAgentRequest>>({});
   const handleSaveKnowledge = () => {
-    agentApi.updateAgent(+(id || 0), {
-      knowledges: knowledgeBase.map((knowledge) => ({
-        name: knowledge.name,
-        content: knowledge.content,
-      })),
-    });
+    toast.promise(
+      agentApi.updateAgent(+(id || 0), {
+        knowledges: knowledgeBase.map((knowledge) => ({
+          name: knowledge.name,
+          content: knowledge.content,
+        })),
+      }),
+      {
+        loading: "Saving...",
+        success: "Knowledge saved",
+        error: "Failed to save knowledge",
+      }
+    );
   };
   const handleSaveSettings = () => {
-    console.log("save settings");
+    console.log("settings", settings);
+    toast.promise(agentApi.updateAgent(+(id || 0), settings), {
+      loading: "Saving...",
+      success: "Settings saved",
+      error: "Failed to save settings",
+    });
   };
   if (!id) {
     return <div>Agent ID is required</div>;
-  }
-  if (!agentInfo) {
-    return <div>Agent not found</div>;
   }
   return (
     <Page back={true}>
       <div className="w-full min-h-screen p-4 pb-6 flex flex-col">
         <Header title={`AI Agent Settings`} />
-        <div className="flex-1">
+        <>
           {isLoading ? (
             <div className="flex-1 flex flex-col space-y-4 items-center justify-center h-full">
               <Spinner />
               <div className="text-sm">Loading...</div>
             </div>
-          ) : (
+          ) : agentInfo ? (
             <Tabs
               aria-label="Tabs radius"
               radius="full"
@@ -66,11 +79,17 @@ export default function ManagePage() {
                 />
               </Tab>
               <Tab key="settings" title="Settings">
-                <ManageSettings agentInfo={agentInfo} />
+                <ManageSettings
+                  agentInfo={agentInfo}
+                  setSettings={(value) => setSettings(value)}
+                />
               </Tab>
             </Tabs>
+          ) : (
+            <div>Agent not found</div>
           )}
-        </div>
+        </>
+        {tab !== "deposit" && <div className="flex-1" />}
         {tab !== "deposit" && (
           <Button
             className="bg-[#FF4F29] rounded-full text-white p-4 w-full"

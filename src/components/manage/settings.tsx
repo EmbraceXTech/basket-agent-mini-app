@@ -1,11 +1,17 @@
 import { Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { IToken, ITokenAvailable } from "@/interfaces/token";
-import { IAgent } from "@/interfaces/agent";
+import { IAgent, IAgentRequest } from "@/interfaces/agent";
 import tokenApi from "@/services/token.service";
 import BaseDatepicker from "../base/Datepicker";
 
-export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
+export default function ManageSettings({
+  agentInfo,
+  setSettings,
+}: {
+  agentInfo: IAgent;
+  setSettings: (value: Partial<IAgentRequest>) => void;
+}) {
   const [chooseTokens, setChooseTokens] = useState<IToken[]>(
     agentInfo.selectedTokens ?? []
   );
@@ -49,26 +55,40 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
   const [endDate, setEndDate] = useState<Date | null>(
     agentInfo.endDate ? new Date(agentInfo.endDate) : null
   );
+
   useEffect(() => {
-    if (intervalSet.interval && intervalSet.intervalUnit) {
-      // const unit = intervalSet.intervalUnit;
-      // const interval = parseInt(intervalSet.interval);
-      // if (unit === "minute") {
-      //   setData({
-      //     intervalSeconds: interval * 60,
-      //   });
-      // } else if (unit === "hour") {
-      //   setData({
-      //     intervalSeconds: interval * 60 * 60,
-      //   });
-      // } else if (unit === "day") {
-      //   setData({
-      //     intervalSeconds: interval * 60 * 60 * 24,
-      //   });
-      // }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [intervalSet]);
+    const convertInterval = () => {
+      const unit = intervalSet.intervalUnit;
+      const interval = parseInt(intervalSet.interval);
+      if (unit === "minute") {
+        return interval * 60;
+      } else if (unit === "hour") {
+        return interval * 60 * 60;
+      } else if (unit === "day") {
+        return interval * 60 * 60 * 24;
+      }
+    };
+    setSettings({
+      selectedTokens: chooseTokens,
+      strategy,
+      takeProfitUSD:
+        tackProfit && tackProfit.length > 0
+          ? parseFloat(tackProfit)
+          : undefined,
+      stopLossUSD:
+        stopLoss && stopLoss.length > 0 ? parseFloat(stopLoss) : undefined,
+      intervalSeconds: convertInterval(),
+      endDate: endDate ?? undefined,
+    });
+  }, [
+    chooseTokens,
+    strategy,
+    tackProfit,
+    stopLoss,
+    intervalSet,
+    endDate,
+    setSettings,
+  ]);
   return (
     <>
       {/* Choose tokens */}

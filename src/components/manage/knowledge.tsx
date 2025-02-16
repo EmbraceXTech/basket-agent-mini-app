@@ -50,7 +50,7 @@ export default function ManageKnowledge({
     );
   };
   return (
-    <div>
+    <>
       <div className="grid grid-cols-9 gap-3 mb-4">
         <div className="text-[#AEB2BD] text-xs col-span-1 flex items-center">
           #
@@ -93,6 +93,6 @@ export default function ManageKnowledge({
       >
         Add Knowledge
       </Button>
-    </div>
+    </>
   );
 }
