@@ -22,7 +22,12 @@ export default function ManagePage() {
     agentInfo?.knowledge ?? []
   );
   const handleSaveKnowledge = () => {
-    console.log("save knowledge", knowledgeBase);
+    agentApi.updateAgent(+(id || 0), {
+      knowledges: knowledgeBase.map((knowledge) => ({
+        name: knowledge.name,
+        content: knowledge.content,
+      })),
+    });
   };
   const handleSaveSettings = () => {
     console.log("save settings");

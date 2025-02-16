@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Button, Input } from "@heroui/react";
 import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
@@ -18,7 +18,7 @@ export default function ManageKnowledge({
 
   useEffect(() => {
     setKnowledgeBase(_knowledgeBase);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_knowledgeBase]);
 
   const handleAddKnowledge = () => {
@@ -31,7 +31,9 @@ export default function ManageKnowledge({
     _setKnowledgeBase((prev) => [...prev, newKnowledge]);
   };
   const handleDeleteKnowledge = (id: number) => {
-    _setKnowledgeBase((prev) => prev.filter((knowledge) => knowledge.id !== id));
+    _setKnowledgeBase((prev) =>
+      prev.filter((knowledge) => knowledge.id !== id)
+    );
   };
   const handleChangeKnowledgeName = (name: string, id: number) => {
     _setKnowledgeBase((prev) =>
@@ -57,10 +59,8 @@ export default function ManageKnowledge({
         <div className="text-[#AEB2BD] text-xs col-span-3">Value</div>
         <div className="text-[#AEB2BD] text-xs col-span-2"></div>
         {_knowledgeBase.map((knowledge) => (
-          <>
-            <div key={knowledge.id} className="col-span-1 flex items-center">
-              {knowledge.id}
-            </div>
+          <Fragment key={knowledge.id}>
+            <div className="col-span-1 flex items-center">{knowledge.id}</div>
             <Input
               value={knowledge.name}
               onChange={(e) =>
@@ -83,7 +83,7 @@ export default function ManageKnowledge({
                 <MinusCircleIcon className="w-5 h-5" />
               </Button>
             </div>
-          </>
+          </Fragment>
         ))}
       </div>
       <Button

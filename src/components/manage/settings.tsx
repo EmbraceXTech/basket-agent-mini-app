@@ -1,9 +1,9 @@
-import { Input, Select, SelectItem, Textarea, DatePicker } from "@heroui/react";
-import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
+import { Input, Select, SelectItem, Textarea } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { IToken, ITokenAvailable } from "@/interfaces/token";
 import { IAgent } from "@/interfaces/agent";
 import tokenApi from "@/services/token.service";
+import BaseDatepicker from "../base/Datepicker";
 
 export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
   const [chooseTokens, setChooseTokens] = useState<IToken[]>(
@@ -46,7 +46,7 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
         }
   );
 
-  const [endDate, setEndDate] = useState<ZonedDateTime | Date | null>(
+  const [endDate, setEndDate] = useState<Date | null>(
     agentInfo.endDate ? new Date(agentInfo.endDate) : null
   );
   useEffect(() => {
@@ -191,14 +191,11 @@ export default function ManageSettings({ agentInfo }: { agentInfo: IAgent }) {
       </div>
       <div className="text-lg font-medium my-2">End Date</div>
       <div className="w-full flex flex-row gap-4 mt-4">
-        <DatePicker
-          hideTimeZone
-          showMonthAndYearPickers
-          defaultValue={now(getLocalTimeZone())}
-          label="End Date"
-          // variant="bordered"
+        <BaseDatepicker
           value={endDate}
           onChange={(e) => setEndDate(e)}
+          titleEnd="End Date"
+          placeholder="Select End Date"
         />
       </div>
     </>

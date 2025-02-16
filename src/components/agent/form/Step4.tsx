@@ -1,8 +1,10 @@
-import useStepperStore from "@/stores/createAgent.store";
-import { DatePicker, Input, Select, SelectItem } from "@heroui/react";
-import { getLocalTimeZone, now, ZonedDateTime } from "@internationalized/date";
+import { Input, Select, SelectItem } from "@heroui/react";
 import { useEffect, useState } from "react";
+
+import useStepperStore from "@/stores/createAgent.store";
+
 import FormHeader from "./FormHeader";
+import BaseDatepicker from "@/components/base/Datepicker";
 
 export default function Step4() {
   const { data, setData, canNext, setCanNext } = useStepperStore();
@@ -10,13 +12,16 @@ export default function Step4() {
     interval: "1",
     intervalUnit: "hour",
   });
-  const [endDate, setEndDate] = useState<ZonedDateTime | null>(
-    now(getLocalTimeZone())
+  // const [endDate, setEndDate] = useState<ZonedDateTime | null>(
+  //   now(getLocalTimeZone())
+  // );
+  const [endDate, setEndDate] = useState<Date | null>(
+    null
   );
   useEffect(() => {
     if (endDate) {
       setData({
-        endDate: endDate?.toDate(),
+        endDate: endDate,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,7 +95,7 @@ export default function Step4() {
       </div>
 
       <div className="w-full flex flex-row gap-4 mt-4">
-        <DatePicker
+        {/* <DatePicker
           hideTimeZone
           showMonthAndYearPickers
           defaultValue={now(getLocalTimeZone())}
@@ -98,7 +103,10 @@ export default function Step4() {
           // variant="bordered"
           value={endDate}
           onChange={(e) => setEndDate(e)}
-        />
+        /> */}
+      </div>
+      <div className="flex-1">
+        <BaseDatepicker value={endDate} onChange={(e) => setEndDate(e)} titleEnd="End Date" />
       </div>
     </div>
   );

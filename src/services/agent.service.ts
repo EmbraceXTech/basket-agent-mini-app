@@ -22,7 +22,7 @@ const createAgent = async (data: IAgentRequest) => {
         content: knowledge.content,
       })),
       intervalSeconds: data.intervalSeconds * 60,
-      endDate: data.endDate.toISOString(),
+      endDate: data.endDate ? data.endDate.toISOString() : null,
     };
     console.log(payload);
     await axiosInstance.post("/agent", payload);
@@ -123,12 +123,24 @@ const terminateAgent = async (agentId: number) => {
   }
 };
 
+const updateAgent = async (agentId: number, data: Partial<IAgentRequest>) => {
+  try {
+    console.log('update agent', agentId, data);
+    // await axiosInstance.patch(`/agent/${agentId}`, data);
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 const agentApi = {
   createAgent,
   getAgents,
   toggleStartPause,
   getAgentId,
   terminateAgent,
+  updateAgent,
 };
 
 export default agentApi;

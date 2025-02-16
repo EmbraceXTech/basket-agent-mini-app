@@ -17,6 +17,7 @@ export default function CreatePage() {
   const handleCreate = async () => {
     try {
       await agentApi.createAgent(data as IAgentRequest);
+      // console.log('create data:', data);
       nextStep();
     } catch (error) {
       console.error(error);
@@ -40,6 +41,8 @@ export default function CreatePage() {
           />
         )}
         <div className="flex-1">
+          <div className="w-full flex justify-center">
+          </div>
           <CreateAgentForm currentStep={currentStep} />
         </div>
         <div className="mt-4">
