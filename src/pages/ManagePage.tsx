@@ -9,9 +9,12 @@ import { IAgentRequest } from "@/interfaces/agent";
 
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
-import ManageAsset from "@/components/manage/Asset";
-import ManageKnowledge from "@/components/manage/Knowledge";
-import ManageSettings from "@/components/manage/Settings";
+// import ManageAsset from "@/components/manage/Asset";
+// import ManageKnowledge from "@/components/manage/Knowledge";
+// import ManageSettings from "@/components/manage/Settings";
+import ManageAsset from "../components/manage/Asset";
+import ManageKnowledge from "../components/manage/Knowledge";
+import ManageSettings from "../components/manage/Settings";
 import toast from "react-hot-toast";
 
 export default function ManagePage() {
