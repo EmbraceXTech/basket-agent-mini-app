@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Progress } from "@heroui/progress";
 import { Button } from "@heroui/react";
+import { useState } from "react";
 
 import useStepperStore from "@/stores/createAgent.store";
 import agentApi from "@/services/agent.service";
@@ -13,14 +14,18 @@ export default function CreatePage() {
   const navigate = useNavigate();
   const { currentStep, setStep, totalSteps, nextStep, canNext, data } =
     useStepperStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCreate = async () => {
+    setIsLoading(true);
     try {
       await agentApi.createAgent(data as IAgentRequest);
       // console.log('create data:', data);
       nextStep();
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,6 +72,8 @@ export default function CreatePage() {
             <Button
               className="w-full bg-[#FF4F29] text-white rounded-full font-medium"
               onPress={handleCreate}
+              isDisabled={isLoading}
+              isLoading={isLoading}
             >
               Create Agent
             </Button>
