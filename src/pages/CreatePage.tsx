@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Progress } from "@heroui/progress";
 import { Button } from "@heroui/react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import useStepperStore from "@/stores/createAgent.store";
 import agentApi from "@/services/agent.service";
@@ -24,6 +25,7 @@ export default function CreatePage() {
       nextStep();
     } catch (error) {
       console.error(error);
+      toast.error("Failed to create agent");
     } finally {
       setIsLoading(false);
     }

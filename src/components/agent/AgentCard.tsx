@@ -1,12 +1,13 @@
 import { Button } from "@heroui/button";
 import { useNavigate } from "react-router-dom";
 import { PauseIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { PlayIcon } from "@heroicons/react/24/solid";
-import { Cog6ToothIcon } from "@heroicons/react/24/solid";
+import { PlayIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
 import { useMemo, useState } from "react";
+import toast from "react-hot-toast";
 
 import { formatUSD, formatPercent } from "@/utils/format.util";
 import type { IAgent } from "@/interfaces/agent.d";
+
 import TerminateModal from "./modal/TerminateModal";
 
 interface AgentCardProps {
@@ -20,13 +21,32 @@ export default function AgentCard({
 }: AgentCardProps) {
   const navigate = useNavigate();
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleToggleStartPause = async (agentId: number) => {
+    try {
+      setIsLoading(true);
+      await toast.promise(
+        async () => {
+          await onToggleStartPause(agentId);
+        },
+        {
+          loading: `Toggle start/pause...`,
+          success: `Toggle start/pause success!`,
+          error: `Toggle start/pause failed!`,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // true -> +, false -> -
   const getPnlStatus = useMemo(() => {
     return agent.pnl === undefined || agent.pnl === null || agent.pnl >= 0;
   }, [agent.pnl]);
-
-  console.log(agent);
 
   return (
     <div
@@ -92,7 +112,9 @@ export default function AgentCard({
       <div className="flex space-x-3">
         <Button
           variant="flat"
-          onPress={() => onToggleStartPause(agent.id)}
+          onPress={() => handleToggleStartPause(agent.id)}
+          // isLoading={isLoading}
+          isDisabled={isLoading}
           className="rounded-full font-semibold flex-1 bg-secondary-background text-secondary"
           startContent={
             agent.isRunning ? (

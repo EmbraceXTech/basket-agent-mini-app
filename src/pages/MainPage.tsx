@@ -4,15 +4,15 @@ import { Button } from "@heroui/button";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@heroui/react";
 
 import emptyBotIcon from "/public/empty-bot.png";
+import agentApi from "@/services/agent.service";
+import useStepperStore from "@/stores/createAgent.store";
 
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
-import agentApi from "@/services/agent.service";
 import AgentCard from "@/components/agent/AgentCard";
-import { Spinner } from "@heroui/react";
-import useStepperStore from "@/stores/createAgent.store";
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -24,7 +24,8 @@ export default function MainPage() {
     refetch,
   } = useQuery({
     queryKey: ["agents"],
-    queryFn: () => agentApi.getAgents({ includeTotalBalance: true, includeChainInfo: true }),
+    queryFn: () =>
+      agentApi.getAgents({ includeTotalBalance: true, includeChainInfo: true }),
   });
 
   const handleNavigateToCreate = useCallback(() => {
@@ -33,19 +34,20 @@ export default function MainPage() {
   }, [navigate, reset]);
 
   const AgentList = useMemo(() => {
-    const toggleStartPause = async (agentId: number) => {
-      try {
-        await agentApi.toggleStartPause(agentId);
-        await refetch();
-      } catch (error) {
-        console.error(error);
-      }
+    const handleToggleStartPause = async (agentId: number) => {
+      await agentApi.toggleStartPause(agentId);
+      await refetch();
     };
 
     if (!agents || agents.length === 0) {
       return (
         <div className="flex-1 h-full flex flex-col gap-4 items-center justify-center">
-          <img src={emptyBotIcon} alt="empty agent bot" width={94} height={94} />
+          <img
+            src={emptyBotIcon}
+            alt="empty agent bot"
+            width={94}
+            height={94}
+          />
           <div className="text-sm text-secondary-text">
             You haven't created any trading bot.
           </div>
@@ -68,7 +70,7 @@ export default function MainPage() {
             <AgentCard
               key={agent.id}
               agent={agent}
-              onToggleStartPause={toggleStartPause}
+              onToggleStartPause={handleToggleStartPause}
             />
           ))}
       </div>
