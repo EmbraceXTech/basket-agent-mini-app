@@ -67,7 +67,7 @@ export default function ManagePage() {
               radius="full"
               fullWidth
               selectedKey={tab}
-              onSelectionChange={(key) => setTab(key as string)}
+              onSelectionChange={(key: string | number) => setTab(String(key))}
             >
               <Tab key="deposit" title="Deposit">
                 <ManageAsset agentInfo={agentInfo} />

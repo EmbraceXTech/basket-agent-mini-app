@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import react from "@vitejs/plugin-react-swc";
+import path from "path";
 // import tailwindcss from "@tailwindcss/vite";
 // import mkcert from "vite-plugin-mkcert";
 
@@ -8,6 +9,11 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig({
   define: {},
   base: "/",
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   plugins: [
     // Allows using React dev server along with building a React application with Vite.
     // https://npmjs.com/package/@vitejs/plugin-react-swc
