@@ -13,6 +13,8 @@ import ManageAsset from "@/components/manage/Asset";
 import ManageKnowledge from "@/components/manage/Knowledge";
 import ManageSettings from "@/components/manage/Settings";
 import toast from "react-hot-toast";
+import { TrashIcon } from "@heroicons/react/24/solid";
+import TerminateModal from "@/components/agent/modal/TerminateModal";
 
 export default function ManagePage() {
   const { id } = useParams();
@@ -40,6 +42,8 @@ export default function ManagePage() {
       }
     );
   };
+  const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
+
   const handleSaveSettings = () => {
     console.log("settings", settings);
     toast.promise(agentApi.updateAgent(+(id || 0), settings), {
@@ -54,7 +58,22 @@ export default function ManagePage() {
   return (
     <Page back={true}>
       <div className="w-full min-h-screen p-4 pb-6 flex flex-col">
-        <Header title={`AI Agent Settings`} />
+        <Header
+          title={`AI Agent Settings`}
+          right={
+            <Button
+              variant="light"
+              onPress={() => setIsTerminateModalOpen(true)}
+              startContent={
+                <TrashIcon
+                  className="w-5 h-5 text-secondary-icon"
+                  strokeWidth={2}
+                />
+              }
+              isIconOnly
+            />
+          }
+        />
         <>
           {isLoading ? (
             <div className="flex-1 flex flex-col space-y-4 items-center justify-center h-full">
@@ -102,6 +121,12 @@ export default function ManagePage() {
           </Button>
         )}
       </div>
+      <TerminateModal
+        isOpen={isTerminateModalOpen}
+        onClose={() => setIsTerminateModalOpen(false)}
+        onOpenChange={() => setIsTerminateModalOpen(!isTerminateModalOpen)}
+        agentId={+id}
+      />
     </Page>
   );
 }

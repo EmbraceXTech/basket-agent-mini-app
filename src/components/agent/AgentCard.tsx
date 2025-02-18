@@ -1,14 +1,12 @@
 import { Button } from "@heroui/button";
 import { useNavigate } from "react-router-dom";
-import { PauseIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { PlayIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
+import { PauseIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/solid";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import { formatUSD, formatPercent } from "@/utils/format.util";
 import type { IAgent } from "@/interfaces/agent.d";
-
-import TerminateModal from "./modal/TerminateModal";
 
 interface AgentCardProps {
   agent: IAgent;
@@ -20,7 +18,6 @@ export default function AgentCard({
   onToggleStartPause,
 }: AgentCardProps) {
   const navigate = useNavigate();
-  const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleToggleStartPause = async (agentId: number) => {
@@ -50,8 +47,8 @@ export default function AgentCard({
 
   return (
     <div
-      className="bg-white rounded-lg p-4 border border-gray-200 flex flex-col space-y-6 w-full"
-      // onClick={() => navigate(`/assets/${agent.id}`)}
+      className="bg-white rounded-lg p-4 border border-gray-200 flex flex-col space-y-6 w-full cursor-pointer"
+      onClick={() => navigate(`/manage/${agent.id}`)}
     >
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-3">
@@ -67,10 +64,7 @@ export default function AgentCard({
             </div>
           )}
           <div>
-            <div
-              className="font-medium text-lg cursor-pointer hover:underline hover:text-primary-400"
-              onClick={() => navigate(`/assets/${agent.id}`)}
-            >
+            <div className="font-medium text-lg">
               {agent.name}
             </div>
             <p className="text-xs text-gray-500">
@@ -79,17 +73,6 @@ export default function AgentCard({
             <div></div>
           </div>
         </div>
-        <Button
-          variant="light"
-          onPress={() => setIsTerminateModalOpen(true)}
-          startContent={
-            <TrashIcon
-              className="w-5 h-5 text-secondary-icon"
-              strokeWidth={2}
-            />
-          }
-          isIconOnly
-        />
       </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="text-sm text-gray-500">Total Balance</div>
@@ -113,7 +96,6 @@ export default function AgentCard({
         <Button
           variant="flat"
           onPress={() => handleToggleStartPause(agent.id)}
-          // isLoading={isLoading}
           isDisabled={isLoading}
           className="rounded-full font-semibold flex-1 bg-secondary-background text-secondary"
           startContent={
@@ -126,21 +108,7 @@ export default function AgentCard({
         >
           {agent.isRunning ? "Pause" : "Start"}
         </Button>
-        <Button
-          variant="flat"
-          onPress={() => navigate(`/manage/${agent.id}`)}
-          className="rounded-full font-semibold flex-1 bg-secondary-background text-secondary"
-          startContent={<Cog6ToothIcon className="w-5 h-5" />}
-        >
-          Settings
-        </Button>
       </div>
-      <TerminateModal
-        isOpen={isTerminateModalOpen}
-        onClose={() => setIsTerminateModalOpen(false)}
-        onOpenChange={() => setIsTerminateModalOpen(!isTerminateModalOpen)}
-        agentId={agent.id}
-      />
     </div>
   );
 }
