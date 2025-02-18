@@ -12,19 +12,19 @@ interface StepperState {
   prevStep: () => void;
   setStep: (step: number) => void;
   // form
-  data: Partial<IAgentRequest>;
-  setData: (data: Partial<IAgentRequest>) => void;
+  data: Partial<IAgentRequest & { id: number }>;
+  setData: (data: Partial<IAgentRequest & { id: number }>) => void;
   reset: () => void;
 }
 
 const useStepperStore = create<StepperState>((set, get) => ({
   // stepper
   currentStep: 0,
-  totalSteps: 5, // Assuming there are 3 steps in the stepper
+  totalSteps: 6,
   canNext: false,
   setCanNext: (canNext: boolean) => set({ canNext }),
   isCompleted: () => {
-    return get().currentStep === get().totalSteps - 2;
+    return get().currentStep === get().totalSteps - 3;
   },
   nextStep: () =>
     set((state) => ({

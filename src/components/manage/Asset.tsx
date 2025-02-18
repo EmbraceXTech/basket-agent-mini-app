@@ -20,7 +20,6 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
     }, 2000);
   };
 
-  const mockContractAddress = "0x1234567890abcdef1234567890abcdef12345678";
   return (
     <div>
       <div className="text-xl font-medium text-center mt-6">Deposit Crypto</div>
@@ -43,7 +42,7 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
         <EthereumQRGenerator
           toAddress={agentInfo.walletKey.address}
           chainId={agentInfo.chainId}
-          tokenAddress={mockContractAddress}
+          tokenAddress={agentInfo.walletKey.address}
           isNativeToken={false}
         />
       </div>

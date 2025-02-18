@@ -1,4 +1,5 @@
 import type { IToken } from "./token";
+import type { IChain } from "./chain";
 import type { IKnowledgeResponse, IKnowledgeRequest } from "./knowledge";
 
 export interface IAgentRequest {
@@ -54,7 +55,8 @@ export interface IAgent extends Omit<IAgentResponse, 'selectedTokens'> {
   chainInfo?: IChain;
 }
 
-export interface IAgentInfo extends Omit<IAgentInfoResponse, 'selectedTokens'> {
+export interface IAgentInfo extends IAgentInfoResponse {
   selectedTokens: IToken[];
+  chainInfo?: IChain;
 }
 

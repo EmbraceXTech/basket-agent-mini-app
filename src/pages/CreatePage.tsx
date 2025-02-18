@@ -10,18 +10,20 @@ import { IAgentRequest } from "@/interfaces/agent.d";
 
 import { Page } from "@/components/base/Page";
 import CreateAgentForm from "@/components/agent/CreateAgentForm";
+import Header from "@/components/layout/Header";
 
 export default function CreatePage() {
   const navigate = useNavigate();
-  const { currentStep, setStep, totalSteps, nextStep, canNext, data } =
+  const { currentStep, setStep, totalSteps, nextStep, canNext, data, setData } =
     useStepperStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCreate = async () => {
     setIsLoading(true);
     try {
-      await agentApi.createAgent(data as IAgentRequest);
+      const agent = await agentApi.createAgent(data as IAgentRequest);
       // console.log('create data:', data);
+      setData({ id: agent.id });
       nextStep();
     } catch (error) {
       console.error(error);
@@ -37,23 +39,26 @@ export default function CreatePage() {
       onBack={() => currentStep > 0 && setStep(currentStep - 1)}
     >
       <div className="w-full h-screen p-4 flex flex-col">
-        {currentStep !== totalSteps - 1 && (
+        {currentStep !== totalSteps - 2 && currentStep !== totalSteps - 1 ? (
           <Progress
             value={currentStep + 1}
-            maxValue={totalSteps}
+            maxValue={totalSteps - 1}
             showValueLabel={false}
             color="primary"
             size="sm"
             className="mb-4 max-w-[10rem] mx-auto"
           />
+        ) : currentStep === totalSteps - 1 ? (
+          <Header title="Deposit USDC/ETH to Your Wallet" />
+        ) : (
+          <div />
         )}
         <div className="flex-1">
-          <div className="w-full flex justify-center">
-          </div>
+          <div className="w-full flex justify-center"></div>
           <CreateAgentForm currentStep={currentStep} />
         </div>
         <div className="mt-4">
-          {currentStep < totalSteps - 2 ? (
+          {currentStep < totalSteps - 3 ? (
             <Button
               className="w-full bg-[#FF4F29] text-white rounded-full font-medium"
               onPress={nextStep}
@@ -61,15 +66,36 @@ export default function CreatePage() {
             >
               Next
             </Button>
-          ) : currentStep === totalSteps - 1 ? (
-            <>
+          ) : currentStep === totalSteps - 2 ? (
+            <div className="flex flex-col gap-2">
               <Button
                 className="w-full bg-[#FF4F29] text-white rounded-full font-medium"
+                onPress={() => nextStep()}
+              >
+                Deposit Now
+              </Button>
+              <Button
+                className="w-full bg-secondary-background text-secondary rounded-full font-medium"
                 onPress={() => navigate("/")}
               >
-                Done
+                Deposit Later
               </Button>
-            </>
+            </div>
+          ) : currentStep === totalSteps - 1 ? (
+            <div className="flex flex-col gap-2">
+              <Button
+                className="w-full bg-[#D9D9D9] text-white rounded-full font-medium"
+                isDisabled
+              >
+                Minimum initial Deposit: $5
+              </Button>
+              <Button
+                className="w-full bg-secondary-background text-secondary rounded-full font-medium"
+                onPress={() => navigate("/")}
+              >
+                Deposit Later
+              </Button>
+            </div>
           ) : (
             <Button
               className="w-full bg-[#FF4F29] text-white rounded-full font-medium"

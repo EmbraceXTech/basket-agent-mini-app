@@ -3,6 +3,7 @@ import Step2 from "./form/Step2";
 import Step3 from "./form/Step3";
 import Step4 from "./form/Step4";
 import Step5 from "./form/Step5";
+import Step6 from "./form/Step6";
 
 export default function CreateAgentForm({
   currentStep,
@@ -16,6 +17,7 @@ export default function CreateAgentForm({
       {currentStep === 2 && <Step3 />}
       {currentStep === 3 && <Step4 />}
       {currentStep === 4 && <Step5 />}
+      {currentStep === 5 && <Step6 />}
     </>
   );
 }

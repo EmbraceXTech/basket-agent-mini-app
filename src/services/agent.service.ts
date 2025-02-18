@@ -10,7 +10,7 @@ import tokenApi from "./token.service";
 import chainApi from "./chain.service";
 import { IChain } from "@/interfaces/chain";
 
-const createAgent = async (data: IAgentRequest) => {
+const createAgent = async (data: IAgentRequest): Promise<IAgent> => {
   const knowledgeFilter = data.knowledges.filter(
     (i) => i.content.length > 0 && i.content.length > 0
   );
@@ -25,8 +25,19 @@ const createAgent = async (data: IAgentRequest) => {
       endDate: data.endDate ? data.endDate.toISOString() : null,
     };
     console.log(payload);
-    await axiosInstance.post("/agent", payload);
-    return true;
+    const response = await axiosInstance.post<Array<IAgentResponse>>(
+      "/agent",
+      payload
+    );
+    if (response.data.length === 0) {
+      throw new Error("Failed to create agent");
+    }
+    return {
+      ...response.data[0],
+      selectedTokens: response.data[0].selectedTokens.map((token) =>
+        JSON.parse(token)
+      ),
+    };
   } catch (error) {
     console.error(error);
     throw error;
@@ -95,16 +106,30 @@ const toggleStartPause = async (agentId: number) => {
   }
 };
 
-const getAgentId = async (agentId: number): Promise<IAgentInfo> => {
+const getAgentId = async (
+  agentId: number,
+  { includeChainInfo }: { includeChainInfo?: boolean } = {
+    includeChainInfo: false,
+  }
+): Promise<IAgentInfo> => {
   try {
     const response = await axiosInstance.get<IAgentInfoResponse>(
       `/agent/${agentId}`
     );
+    let chainInfo: IChain | undefined;
+    if (includeChainInfo) {
+      const _chainInfo = await chainApi.getChainAvailable();
+      const chain = _chainInfo.find(
+        (chain) => chain.chainId.toString() === response.data.chainId
+      );
+      chainInfo = chain;
+    }
     return {
       ...response.data,
       selectedTokens: response.data.selectedTokens.map((token) =>
         JSON.parse(token)
       ),
+      chainInfo: chainInfo,
     };
   } catch (error) {
     console.error(error);
@@ -125,7 +150,7 @@ const terminateAgent = async (agentId: number) => {
 
 const updateAgent = async (agentId: number, data: Partial<IAgentRequest>) => {
   try {
-    console.log('update agent', agentId, data);
+    console.log("update agent", agentId, data);
     // await axiosInstance.patch(`/agent/${agentId}`, data);
     return true;
   } catch (error) {

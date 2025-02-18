@@ -53,7 +53,11 @@ export default function ManagePage() {
     });
   };
   if (!id) {
-    return <div>Agent ID is required</div>;
+    return (
+      <div className="flex-1 flex flex-col space-y-4 items-center justify-center h-full">
+        <div className="text-sm">Agent ID is required</div>
+      </div>
+    );
   }
   return (
     <Page back={true}>
