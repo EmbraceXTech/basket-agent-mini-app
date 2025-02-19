@@ -17,17 +17,19 @@ import { IAgentRequest } from "@/interfaces/agent";
 
 import { Page } from "@/components/base/Page";
 import Header from "@/components/layout/Header";
-import ManageAsset from "@/components/manage/Asset";
+// import ManageAsset from "@/components/manage/Asset";
+import ManageWallet from "@/components/manage/Wallet";
 import ManageKnowledge from "@/components/manage/Knowledge";
 import ManageSettings from "@/components/manage/Settings";
 import TerminateModal from "@/components/agent/modal/TerminateModal";
+import ManageLogs from "@/components/manage/Logs";
 
 export default function ManagePage() {
   const { id } = useParams();
   const [tab, setTab] = useState("deposit");
   const { data: agentInfo, isLoading } = useQuery({
     queryKey: ["agentInfo", id],
-    queryFn: () => agentApi.getAgentId(+(id || 0)),
+    queryFn: () => agentApi.getAgentId(+(id || 0), { includeChainInfo: true }),
   });
   const [knowledgeBase, setKnowledgeBase] = useState<IKnowledge[]>(
     agentInfo?.knowledge ?? []
@@ -104,7 +106,7 @@ export default function ManagePage() {
               }}
             >
               <Tab
-                key="deposit"
+                key="wallet"
                 title={
                   <div className="flex flex-col items-center space-y-1">
                     <WalletIcon className="w-6 h-6" />
@@ -112,7 +114,9 @@ export default function ManagePage() {
                   </div>
                 }
               >
-                <ManageAsset agentInfo={agentInfo} />
+                <div className="my-6">
+                  <ManageWallet agentInfo={agentInfo} />
+                </div>
               </Tab>
               <Tab
                 key="logs"
@@ -123,7 +127,7 @@ export default function ManagePage() {
                   </div>
                 }
               >
-                <div>Logs</div>
+                <ManageLogs agentInfo={agentInfo} />
               </Tab>
               <Tab
                 key="knowledge"
@@ -158,8 +162,10 @@ export default function ManagePage() {
             <div>Agent not found</div>
           )}
         </>
-        {tab !== "deposit" && <div className="flex-1" />}
-        {tab !== "deposit" && (
+        {(tab === "knowledge" || tab === "settings") && (
+          <div className="flex-1" />
+        )}
+        {(tab === "knowledge" || tab === "settings") && (
           <Button
             className="bg-[#FF4F29] rounded-full text-white p-4 w-full"
             variant="solid"

@@ -132,7 +132,7 @@ export default function ManageSettings({
         selectedKeys={chooseTokens.map((token) => token.tokenAddress)}
       >
         {tokenList.map((token) => (
-          <SelectItem key={token.address} value={token.address}>
+          <SelectItem key={token.address} value={token.address} textValue={token.symbol}>
             <div className="flex space-x-3">
               <img className="w-6 h-6" src={token.logoURI} alt={token.symbol} />
               <p>{token.symbol}</p>

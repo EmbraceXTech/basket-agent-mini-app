@@ -8,6 +8,7 @@ import MainPage from "@/pages/MainPage";
 import CreatePage from "@/pages/CreatePage";
 import ManagePage from "@/pages/ManagePage";
 import AssetPage from "@/pages/AssetPage";
+import DepositPage from "@/pages/ManagePage/DepositPage";
 
 interface Route {
   path: string;
@@ -24,6 +25,10 @@ export const routes: Route[] = [
   {
     path: "/create",
     element: <CreatePage />,
+  },
+  {
+    path: "/manage/:id/deposit",
+    element: <DepositPage />,
   },
   {
     path: "/manage/:id",

@@ -45,6 +45,14 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
           tokenAddress={agentInfo.walletKey.address}
           isNativeToken={false}
         />
+        <div className="bg-[#F8F9FB] flex space-x-3 px-4 py-2 rounded-full mt-6">
+          <img
+            src={agentInfo.chainInfo?.iconUrl}
+            alt={agentInfo.chainInfo?.name}
+            className="w-6 h-6"
+          />
+          <p className="">{agentInfo.chainInfo?.name}</p>
+        </div>
       </div>
       <div className="my-3 border-b border-dashed border-secondary-text mx-8" />
       <p className="text-sm text-secondary-text text-center mt-6 mx-8">

@@ -8,3 +8,11 @@ export const toUTCDate = (date: Date): Date => {
   const utcDate = new Date(date);
   return new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
 };
+
+export const formatDateOnly = (date: Date): string => {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
