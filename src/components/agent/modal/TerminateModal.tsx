@@ -7,6 +7,8 @@ import {
   ModalFooter,
   ModalHeader,
 } from "@heroui/react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function TerminateModal({
   isOpen,
@@ -19,13 +21,27 @@ export default function TerminateModal({
   onOpenChange: () => void;
   agentId: number;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   const handleTerminate = async () => {
-    try {
-      await agentApi.terminateAgent(agentId);
-    } catch (error) {
-      console.error(error);
-      onClose?.();
-    }
+    setIsLoading(true);
+    toast.promise(
+      async () => {
+        try {
+          await agentApi.terminateAgent(agentId);
+        } catch (error) {
+          console.error(error);
+          throw error;
+        } finally {
+          onClose?.();
+          setIsLoading(false);
+        }
+      },
+      {
+        loading: "Terminating agent...",
+        success: "Agent terminated successfully",
+        error: "Failed to terminate agent",
+      }
+    );
   };
 
   return (
@@ -41,12 +57,16 @@ export default function TerminateModal({
               Are you sure?
             </ModalHeader>
             <ModalBody>
-              <p className="text-center text-secondary-text">You's lose offline access to all your assets sessions.</p>
+              <p className="text-center text-secondary-text">
+                You's lose offline access to all your assets sessions.
+              </p>
             </ModalBody>
             <ModalFooter className="flex flex-col">
               <Button
                 color="primary"
                 variant="solid"
+                isDisabled={isLoading}
+                isLoading={isLoading}
                 onPress={handleTerminate}
                 className="w-full rounded-full font-semibold"
               >

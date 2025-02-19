@@ -2,6 +2,14 @@ import { useParams } from "react-router-dom";
 import { Tabs, Tab, Spinner, Button } from "@heroui/react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import {
+  BookOpenIcon,
+  Cog6ToothIcon,
+  DocumentTextIcon,
+  TrashIcon,
+  WalletIcon,
+} from "@heroicons/react/24/outline";
 
 import agentApi from "@/services/agent.service";
 import { IKnowledge } from "@/interfaces/knowledge";
@@ -12,8 +20,6 @@ import Header from "@/components/layout/Header";
 import ManageAsset from "@/components/manage/Asset";
 import ManageKnowledge from "@/components/manage/Knowledge";
 import ManageSettings from "@/components/manage/Settings";
-import toast from "react-hot-toast";
-import { TrashIcon } from "@heroicons/react/24/solid";
 import TerminateModal from "@/components/agent/modal/TerminateModal";
 
 export default function ManagePage() {
@@ -63,7 +69,7 @@ export default function ManagePage() {
     <Page back={true}>
       <div className="w-full min-h-screen p-4 pb-6 flex flex-col">
         <Header
-          title={`AI Agent Settings`}
+          title={agentInfo?.name || "AI Agent Settings"}
           right={
             <Button
               variant="light"
@@ -88,20 +94,60 @@ export default function ManagePage() {
             <Tabs
               aria-label="Tabs radius"
               radius="full"
+              variant="underlined"
+              color="primary"
               fullWidth
               selectedKey={tab}
               onSelectionChange={(key: string | number) => setTab(String(key))}
+              classNames={{
+                tab: "h-fit",
+              }}
             >
-              <Tab key="deposit" title="Deposit">
+              <Tab
+                key="deposit"
+                title={
+                  <div className="flex flex-col items-center space-y-1">
+                    <WalletIcon className="w-6 h-6" />
+                    <p className="text-xs font-medium">Wallet</p>
+                  </div>
+                }
+              >
                 <ManageAsset agentInfo={agentInfo} />
               </Tab>
-              <Tab key="knowledge" title="Knowledge">
+              <Tab
+                key="logs"
+                title={
+                  <div className="flex flex-col items-center space-y-1">
+                    <DocumentTextIcon className="w-6 h-6" />
+                    <p className="text-xs font-medium">Logs</p>
+                  </div>
+                }
+              >
+                <div>Logs</div>
+              </Tab>
+              <Tab
+                key="knowledge"
+                title={
+                  <div className="flex flex-col items-center space-y-1">
+                    <BookOpenIcon className="w-6 h-6" />
+                    <p className="text-xs font-medium">Knowledge</p>
+                  </div>
+                }
+              >
                 <ManageKnowledge
                   agentInfo={agentInfo}
                   setKnowledgeBase={setKnowledgeBase}
                 />
               </Tab>
-              <Tab key="settings" title="Settings">
+              <Tab
+                key="settings"
+                title={
+                  <div className="flex flex-col items-center space-y-1">
+                    <Cog6ToothIcon className="w-6 h-6" />
+                    <p className="text-xs font-medium">Settings</p>
+                  </div>
+                }
+              >
                 <ManageSettings
                   agentInfo={agentInfo}
                   setSettings={(value) => setSettings(value)}

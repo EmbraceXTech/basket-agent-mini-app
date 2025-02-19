@@ -12,9 +12,7 @@ export default function ATHandler({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken =
-      urlParams.get("accessToken") || localStorageUtil.getItem("accessToken");
-
-    localStorageUtil.setItem("accessToken", accessToken);
+      urlParams.get("accessToken") ?? localStorageUtil.getItem("accessToken");
 
     if (!accessToken) {
       setIsError(true);
@@ -24,6 +22,9 @@ export default function ATHandler({ children }: { children: React.ReactNode }) {
 
     authApi
       .checkAT(accessToken)
+      .then(() => {
+        localStorageUtil.setItem("accessToken", accessToken);
+      })
       .catch((error) => {
         console.error(error);
         localStorageUtil.removeItem("accessToken");

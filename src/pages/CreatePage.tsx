@@ -36,7 +36,11 @@ export default function CreatePage() {
   return (
     <Page
       back={true}
-      onBack={() => currentStep > 0 && setStep(currentStep - 1)}
+      onBack={() =>
+        currentStep > 0
+          ? setStep(currentStep - 1)
+          : navigate("/")
+      }
     >
       <div className="w-full h-screen p-4 flex flex-col">
         {currentStep !== totalSteps - 2 && currentStep !== totalSteps - 1 ? (
