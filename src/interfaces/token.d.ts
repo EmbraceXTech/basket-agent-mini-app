@@ -28,6 +28,7 @@ export interface IAgentWalletBalanceResponse {
 export interface IAgentWalletBalance extends IAgentWalletBalanceResponse {
   balanceUsd?: [string, number][]; // [tokenSymbol, balanceUsd]
   tokenInfo?: ITokenAvailable[];
+  tokenPrice?: ITokenPriceResponse[];
 }
 export interface ITokenPriceResponse {
   token: string;

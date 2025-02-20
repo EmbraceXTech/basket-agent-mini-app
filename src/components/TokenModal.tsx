@@ -21,7 +21,10 @@ export default function TokenModal({
 }) {
   const { data: walletBalances, isLoading } = useQuery({
     queryKey: ["agent-wallet-balance", agent?.id],
-    queryFn: () => tokenApi.getTokenBalance(agent?.id?.toString() ?? ""),
+    queryFn: () =>
+      tokenApi.getTokenBalance(agent?.id?.toString() ?? "", {
+        chainId: agent?.chainId,
+      }),
     enabled: !!agent?.id,
   });
   return (

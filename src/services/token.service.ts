@@ -8,10 +8,13 @@ import { ITokenAvailable } from "@/interfaces/token";
 import agentApi from "./agent.service";
 
 const getTokenAvailable = async (
-  chainId: string
+  chainId: string,
+  includeTokenBase?: boolean
 ): Promise<ITokenAvailable[]> => {
   const response = await axiosInstance.get<ITokenAvailable[]>(
-    `/token/available-tokens?chainId=${chainId}`
+    `/token/available-tokens?chainId=${chainId}${
+      includeTokenBase ? "&includeTokenBase=true" : ""
+    }`
   );
   return response.data;
 };
@@ -19,10 +22,24 @@ const getTokenAvailable = async (
 const getTokenPrice = async (
   tokenSymbols: string[]
 ): Promise<ITokenPriceResponse[]> => {
-  const response = await axiosInstance.get<ITokenPriceResponse[]>(
-    `/price/${tokenSymbols.join(",")}`
+  const tokenSymbolsWithoutUSDC = tokenSymbols.filter(
+    (token) => token !== "USDC"
   );
-  return response.data;
+  const response =
+    tokenSymbolsWithoutUSDC.length > 0
+      ? await axiosInstance.get<ITokenPriceResponse[]>(
+          `/price/${tokenSymbolsWithoutUSDC.join(",")}`
+        )
+      : { data: [] };
+  return [
+    ...response.data,
+    {
+      token: "USDC",
+      price: 1,
+      source: "self",
+      quote: "USDC",
+    },
+  ];
 };
 
 const getTokenBalance = async (
@@ -30,9 +47,19 @@ const getTokenBalance = async (
   {
     addUsdBalance,
     addTokenInfo,
-  }: { addUsdBalance?: boolean; addTokenInfo?: boolean } = {
+    selectTokenSymbol,
+    includeTokenBase,
+  }: {
+    addUsdBalance?: boolean;
+    addTokenInfo?: boolean;
+    selectTokenSymbol?: string[];
+    includeTokenBase?: boolean;
+    chainId?: string;
+  } = {
     addUsdBalance: false,
     addTokenInfo: false,
+    selectTokenSymbol: [],
+    includeTokenBase: false,
   }
 ): Promise<IAgentWalletBalance> => {
   try {
@@ -41,6 +68,7 @@ const getTokenBalance = async (
     );
     let balanceUsd: [string, number][] = [];
     let tokenInfo: ITokenAvailable[] = [];
+    let tokenPrice: ITokenPriceResponse[] = [];
     if (response.data.tokens.length === 0) {
       return {
         ...response.data,
@@ -49,32 +77,49 @@ const getTokenBalance = async (
       };
     }
     if (addUsdBalance) {
-      const tokenFocuses = response.data.tokens
-        .map((token) => token[0].toUpperCase())
-        .filter((token) => token !== "USDC");
-      const tokenPrice = await getTokenPrice(tokenFocuses);
-      balanceUsd = response.data.tokens.map((token) => {
-        const convertRate = tokenPrice.find(
-          (price) => price.token === token[0].toUpperCase()
-        );
-        return [token[0], +token[1] * (convertRate?.price ?? 1)];
-      });
+      const tokenFocuses =
+        selectTokenSymbol && selectTokenSymbol.length > 0
+          ? selectTokenSymbol.map((token) => token.toUpperCase())
+          : response.data.tokens
+              .map((token) => token[0].toUpperCase())
+              .filter((token) => token !== "USDC");
+      tokenPrice = await getTokenPrice(tokenFocuses);
+      balanceUsd =
+        selectTokenSymbol && selectTokenSymbol.length > 0
+          ? selectTokenSymbol.map((token) => {
+              const convertRate = tokenPrice.find(
+                (price) => price.token === token
+              );
+              const _balance = response.data.tokens.find(
+                (t) => t[0].toUpperCase() === token.toUpperCase()
+              ) || ["", ""];
+              return [token, +_balance[1] * (convertRate?.price ?? 1)];
+            })
+          : response.data.tokens.map((token) => {
+              const convertRate = tokenPrice.find(
+                (price) => price.token === token[0].toUpperCase()
+              );
+              return [token[0], +token[1] * (convertRate?.price ?? 1)];
+            });
     }
     if (addTokenInfo) {
       const agent = await agentApi.getAgentId(+agentId);
-      const _tokenInfo = await getTokenAvailable(agent.chainId);
+      const _tokenInfo = await getTokenAvailable(
+        agent.chainId,
+        includeTokenBase
+      );
       tokenInfo = _tokenInfo.map((token) => ({
         ...token,
         symbol: token.symbol.toUpperCase(),
       }));
     }
-    return { ...response.data, balanceUsd, tokenInfo };
+    return { ...response.data, balanceUsd, tokenInfo, tokenPrice };
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
-const tokenApi = { getTokenBalance, getTokenAvailable };
+const tokenApi = { getTokenBalance, getTokenAvailable, getTokenPrice };
 
 export default tokenApi;

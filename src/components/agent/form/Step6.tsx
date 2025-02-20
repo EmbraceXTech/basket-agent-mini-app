@@ -21,7 +21,10 @@ export default function Step6() {
 
   const { data: tokenBalances, isLoading: isTokenBalancesLoading } = useQuery({
     queryKey: ["tokenBalances", agentInfo?.id],
-    queryFn: () => tokenApi.getTokenBalance((agentInfo?.id || "").toString()),
+    queryFn: () =>
+      tokenApi.getTokenBalance((agentInfo?.id || "").toString(), {
+        chainId: agentInfo?.chainId,
+      }),
     enabled: !!agentInfo?.id,
     refetchInterval: 10000, // 10 seconds
   });

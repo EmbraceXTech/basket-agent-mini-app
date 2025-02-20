@@ -1,18 +1,37 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { ITokenAvailable } from "@/interfaces/token";
 import { formatUSD } from "@/utils/format.util";
 
-export default function TokenCard({ token, tokenInfo, balanceUsd }: { token: [string, string], tokenInfo: ITokenAvailable, balanceUsd: [string, number] }) {
+export default function TokenCard({
+  token,
+  tokenInfo,
+  balanceUsd,
+  agentId,
+}: {
+  token: [string, string];
+  tokenInfo: ITokenAvailable;
+  balanceUsd: [string, number];
+  agentId: number;
+}) {
   // true -> +, false -> -
   const pnl = 0;
   const getPnlStatus = useMemo(() => {
     // return token.pnl === undefined || token.pnl === null || token.pnl >= 0;
     return true;
-  // }, [token.pnl]);
+    // }, [token.pnl]);
   }, []);
+  const navigate = useNavigate();
   return (
-    <div className="flex flex-row justify-between items-center">
+    <div
+      className="flex flex-row justify-between items-center cursor-pointer"
+      onClick={() =>
+        navigate(
+          `/manage/${agentId}/token-balance-graph?tokenAddress=${tokenInfo.address}&tokenSymbol=${token[0]}`
+        )
+      }
+    >
       <div className="flex flex-row items-center gap-2">
         <img
           src={tokenInfo?.logoURI}

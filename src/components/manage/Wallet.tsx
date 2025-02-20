@@ -17,6 +17,8 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
       tokenApi.getTokenBalance(agentInfo.id.toString() || "", {
         addUsdBalance: true,
         addTokenInfo: true,
+        includeTokenBase: true,
+        chainId: agentInfo.chainId,
       }),
   });
 
@@ -29,17 +31,24 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
       );
     }
 
+    console.log(tokenBalances);
+
     return (
       <div className="flex flex-col space-y-4">
         {tokenBalances.tokens.map((token, key) => {
-          const tokenInfo = tokenBalances.tokenInfo?.[key];
-          const balanceUsd = tokenBalances.balanceUsd?.[key] ?? [token[0], 0];
+          const tokenInfo = tokenBalances.tokenInfo?.find(
+            (t) => t.symbol.toLowerCase() === token[0].toLowerCase()
+          );
+          const balanceUsd = tokenBalances.balanceUsd?.find(
+            (t) => t[0].toLowerCase() === token[0].toLowerCase()
+          ) ?? [token[0], 0];
           if (!tokenInfo) {
             return null;
           }
           return (
             <TokenCard
               key={key}
+              agentId={agentInfo.id}
               token={token}
               tokenInfo={tokenInfo}
               balanceUsd={balanceUsd}
@@ -48,7 +57,7 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
         })}
       </div>
     );
-  }, [tokenBalances]);
+  }, [agentInfo.id, tokenBalances]);
   return (
     <div>
       {isLoading ? (

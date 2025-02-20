@@ -1,14 +1,15 @@
 import type { JSX } from "react";
 
-import { IndexPage } from "@/pages/TestPage/IndexPage";
-import { InitDataPage } from "@/pages/TestPage/InitDataPage";
-import { LaunchParamsPage } from "@/pages/TestPage/LaunchParamsPage";
-import { ThemeParamsPage } from "@/pages/TestPage/ThemeParamsPage";
+// import { IndexPage } from "@/pages/TestPage/IndexPage";
+// import { InitDataPage } from "@/pages/TestPage/InitDataPage";
+// import { LaunchParamsPage } from "@/pages/TestPage/LaunchParamsPage";
+// import { ThemeParamsPage } from "@/pages/TestPage/ThemeParamsPage";
 import MainPage from "@/pages/MainPage";
 import CreatePage from "@/pages/CreatePage";
 import ManagePage from "@/pages/ManagePage";
 import AssetPage from "@/pages/AssetPage";
 import DepositPage from "@/pages/ManagePage/DepositPage";
+import TokenBalanceGraph from "@/pages/ManagePage/TokenBalanceGraph";
 
 interface Route {
   path: string;
@@ -35,26 +36,30 @@ export const routes: Route[] = [
     element: <ManagePage />,
   },
   {
+    path: "/manage/:id/token-balance-graph",
+    element: <TokenBalanceGraph />,
+  },
+  {
     path: "/assets/:id",
     element: <AssetPage />,
   },
-  {
-    path: "/test/index",
-    element: <IndexPage />,
-  },
-  {
-    path: "/test/init-data",
-    element: <InitDataPage />,
-    title: "Init Data",
-  },
-  {
-    path: "/test/theme-params",
-    element: <ThemeParamsPage />,
-    title: "Theme Params",
-  },
-  {
-    path: "/test/launch-params",
-    element: <LaunchParamsPage />,
-    title: "Launch Params",
-  },
+  // {
+  //   path: "/test/index",
+  //   element: <IndexPage />,
+  // },
+  // {
+  //   path: "/test/init-data",
+  //   element: <InitDataPage />,
+  //   title: "Init Data",
+  // },
+  // {
+  //   path: "/test/theme-params",
+  //   element: <ThemeParamsPage />,
+  //   title: "Theme Params",
+  // },
+  // {
+  //   path: "/test/launch-params",
+  //   element: <LaunchParamsPage />,
+  //   title: "Launch Params",
+  // },
 ];

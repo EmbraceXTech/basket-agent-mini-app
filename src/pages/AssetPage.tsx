@@ -38,11 +38,19 @@ export default function AssetPage() {
           if (!tokenInfo) {
             return null;
           }
-          return <TokenCard key={key} token={token} tokenInfo={tokenInfo} balanceUsd={balanceUsd} />;
+          return (
+            <TokenCard
+              key={key}
+              token={token}
+              tokenInfo={tokenInfo}
+              balanceUsd={balanceUsd}
+              agentId={Number(id)}
+            />
+          );
         })}
       </div>
     );
-  }, [tokenBalances]);
+  }, [tokenBalances, id]);
 
   return (
     <Page back={true}>
