@@ -95,11 +95,18 @@ const getAgents = async (
   }
 };
 
-const toggleStartPause = async (agentId: number) => {
+const toggleStartPause = async (agentId: number, isRunning: boolean) => {
   try {
-    console.log(agentId);
-    // await axiosInstance.post(`/agents/${agentId}/toggle-start-pause`);
-    return true;
+    if (isRunning) {
+      // pause
+      console.log("pause");
+      await axiosInstance.patch(`/agent/${agentId}/pause`);
+    } else {
+      // start
+      console.log("start");
+      await axiosInstance.patch(`/agent/${agentId}/start`);
+    }
+    return { status: isRunning ? "pause" : "start" };
   } catch (error) {
     console.error(error);
     throw error;

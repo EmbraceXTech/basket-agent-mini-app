@@ -34,9 +34,13 @@ export default function MainPage() {
   }, [navigate, reset]);
 
   const AgentList = useMemo(() => {
-    const handleToggleStartPause = async (agentId: number) => {
-      await agentApi.toggleStartPause(agentId);
+    const handleToggleStartPause = async (
+      agentId: number,
+      isRunning: boolean
+    ) => {
+      const { status } = await agentApi.toggleStartPause(agentId, isRunning);
       await refetch();
+      return status;
     };
 
     if (!agents || agents.length === 0) {

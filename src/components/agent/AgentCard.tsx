@@ -10,7 +10,7 @@ import type { IAgent } from "@/interfaces/agent.d";
 
 interface AgentCardProps {
   agent: IAgent;
-  onToggleStartPause: (agentId: number) => Promise<void>;
+  onToggleStartPause: (agentId: number, isRunning: boolean) => Promise<string>;
 }
 
 export default function AgentCard({
@@ -20,16 +20,20 @@ export default function AgentCard({
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleToggleStartPause = async (agentId: number) => {
+  const handleToggleStartPause = async (
+    agentId: number,
+    isRunning: boolean
+  ) => {
     try {
       setIsLoading(true);
       await toast.promise(
         async () => {
-          await onToggleStartPause(agentId);
+          const status = await onToggleStartPause(agentId, isRunning);
+          return status;
         },
         {
-          loading: `Toggle start/pause...`,
-          success: `Toggle start/pause success!`,
+          loading: `${isRunning ? "Pausing" : "Starting"}...`,
+          success: (status) => `Agent ${agentId} is ${status}!`,
           error: `Toggle start/pause failed!`,
         }
       );
@@ -64,9 +68,7 @@ export default function AgentCard({
             </div>
           )}
           <div>
-            <div className="font-medium text-lg">
-              {agent.name}
-            </div>
+            <div className="font-medium text-lg">{agent.name}</div>
             <p className="text-xs text-gray-500">
               Created at: {new Date(agent.createdAt).toLocaleString()}
             </p>
@@ -95,7 +97,7 @@ export default function AgentCard({
       <div className="flex space-x-3">
         <Button
           variant="flat"
-          onPress={() => handleToggleStartPause(agent.id)}
+          onPress={() => handleToggleStartPause(agent.id, agent.isRunning)}
           isDisabled={isLoading}
           className="rounded-full font-semibold flex-1 bg-secondary-background text-secondary"
           startContent={
