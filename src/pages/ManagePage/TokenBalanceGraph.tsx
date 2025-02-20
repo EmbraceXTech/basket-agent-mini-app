@@ -25,9 +25,12 @@ export default function TokenBalanceGraph() {
         selectTokenSymbol: tokenSymbol
           ? [tokenSymbol.toUpperCase()]
           : undefined,
+        includeTokenBase: true,
       }),
     enabled: !!id && !!tokenAddress && !!tokenSymbol,
   });
+
+  console.log(tokenBalance);
 
   const { tokenInfo, balanceUsd, balanceToken, tokenPrice } = useMemo(() => {
     return {
