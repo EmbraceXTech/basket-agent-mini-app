@@ -80,6 +80,7 @@ export default function ManageSettings({
       intervalSeconds: convertInterval(),
       endDate: endDate ?? undefined,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     chooseTokens,
     strategy,
@@ -87,7 +88,7 @@ export default function ManageSettings({
     stopLoss,
     intervalSet,
     endDate,
-    setSettings,
+    // setSettings,
   ]);
   return (
     <>
@@ -129,10 +130,18 @@ export default function ManageSettings({
             </div>
           );
         }}
-        selectedKeys={chooseTokens.map((token) => token.tokenAddress)}
+        selectedKeys={
+          tokenList.length > 0
+            ? chooseTokens.map((token) => token.tokenAddress)
+            : []
+        }
       >
         {tokenList.map((token) => (
-          <SelectItem key={token.address} value={token.address} textValue={token.symbol}>
+          <SelectItem
+            key={token.address}
+            value={token.address}
+            textValue={token.symbol}
+          >
             <div className="flex space-x-3">
               <img className="w-6 h-6" src={token.logoURI} alt={token.symbol} />
               <p>{token.symbol}</p>

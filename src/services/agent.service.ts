@@ -146,6 +146,7 @@ const getAgentId = async (
 };
 
 const terminateAgent = async (agentId: number) => {
+  // TODO: terminate agent
   try {
     // await axiosInstance.delete(`/agent/${agentId}`);
     console.log(`terminate agent ${agentId}`);
@@ -157,6 +158,7 @@ const terminateAgent = async (agentId: number) => {
 };
 
 const updateAgent = async (agentId: number, data: Partial<IAgentRequest>) => {
+  // TODO: update agent
   try {
     console.log("update agent", agentId, data);
     // await axiosInstance.patch(`/agent/${agentId}`, data);

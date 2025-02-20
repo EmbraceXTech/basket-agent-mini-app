@@ -26,7 +26,8 @@ import ManageLogs from "@/components/manage/Logs";
 
 export default function ManagePage() {
   const { id } = useParams();
-  const [tab, setTab] = useState("deposit");
+  const [tab, setTab] = useState("wallet");
+  const [isSaving, setIsSaving] = useState(false);
   const {
     data: agentInfo,
     isLoading,
@@ -43,12 +44,22 @@ export default function ManagePage() {
   const handleSaveKnowledge = () => {
     toast.promise(
       async () => {
-        await agentApi.updateKnowledge(
-          +(id || 0),
-          removeKnowledgeIds,
-          knowledgeBase
-        );
-        refetch();
+        setIsSaving(true);
+        try {
+          await agentApi.updateKnowledge(
+            +(id || 0),
+            removeKnowledgeIds,
+            knowledgeBase
+          );
+          refetch();
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw error;
+          }
+          throw new Error("Failed to save knowledge");
+        } finally {
+          setIsSaving(false);
+        }
       },
       {
         loading: "Saving...",
@@ -60,12 +71,27 @@ export default function ManagePage() {
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
 
   const handleSaveSettings = () => {
-    console.log("settings", settings);
-    toast.promise(agentApi.updateAgent(+(id || 0), settings), {
-      loading: "Saving...",
-      success: "Settings saved",
-      error: "Failed to save settings",
-    });
+    toast.promise(
+      async () => {
+        setIsSaving(true);
+        try {
+          await agentApi.updateAgent(+(id || 0), settings);
+          refetch();
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            throw error;
+          }
+          throw new Error("Failed to save settings");
+        } finally {
+          setIsSaving(false);
+        }
+      },
+      {
+        loading: "Saving...",
+        success: "Settings saved",
+        error: "Failed to save settings",
+      }
+    );
   };
   if (!id) {
     return (
@@ -182,6 +208,8 @@ export default function ManagePage() {
             onPress={
               tab === "knowledge" ? handleSaveKnowledge : handleSaveSettings
             }
+            isLoading={isSaving}
+            isDisabled={isSaving}
           >
             Save
           </Button>
