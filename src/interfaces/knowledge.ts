@@ -1,9 +1,5 @@
-export interface IKnowledgeR {
-  name: string;
-  value: string;
-}
-
 export interface IKnowledgeRequest {
+  id?: number;
   name: string;
   content: string;
 }
@@ -19,6 +15,12 @@ export interface IKnowledgeResponse {
 export interface IKnowledge {
   id: number;
   agentId: number;
+  name: string;
+  content: string;
+}
+
+export interface IUpdateKnowledgeRequest {
+  id: number;
   name: string;
   content: string;
 }

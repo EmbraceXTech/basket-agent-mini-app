@@ -9,6 +9,7 @@ import {
 import tokenApi from "./token.service";
 import chainApi from "./chain.service";
 import { IChain } from "@/interfaces/chain";
+import { IUpdateKnowledgeRequest } from "@/interfaces/knowledge";
 
 const createAgent = async (data: IAgentRequest): Promise<IAgent> => {
   const knowledgeFilter = data.knowledges.filter(
@@ -166,6 +167,26 @@ const updateAgent = async (agentId: number, data: Partial<IAgentRequest>) => {
   }
 };
 
+const updateKnowledge = async (
+  agentId: number,
+  knowledgeIds: number[],
+  knowledges: IUpdateKnowledgeRequest[]
+) => {
+  const addPromises = knowledges
+    .filter((knowledge) => !knowledge?.id)
+    .map(async (knowledge) => {
+      await axiosInstance.post(`/agent/${agentId}/knowledge`, {
+        name: knowledge.name,
+        content: knowledge.content,
+      });
+    });
+  const removePromises = knowledgeIds.map(async (id) => {
+    await axiosInstance.delete(`/agent/${agentId}/knowledge/${id}`);
+  });
+  await Promise.all([...addPromises, ...removePromises]);
+  return true;
+};
+
 const agentApi = {
   createAgent,
   getAgents,
@@ -173,6 +194,7 @@ const agentApi = {
   getAgentId,
   terminateAgent,
   updateAgent,
+  updateKnowledge,
 };
 
 export default agentApi;

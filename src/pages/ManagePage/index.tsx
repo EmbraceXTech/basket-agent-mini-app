@@ -12,7 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 import agentApi from "@/services/agent.service";
-import { IKnowledge } from "@/interfaces/knowledge";
+import { IUpdateKnowledgeRequest } from "@/interfaces/knowledge";
 import { IAgentRequest } from "@/interfaces/agent";
 
 import { Page } from "@/components/base/Page";
@@ -27,22 +27,29 @@ import ManageLogs from "@/components/manage/Logs";
 export default function ManagePage() {
   const { id } = useParams();
   const [tab, setTab] = useState("deposit");
-  const { data: agentInfo, isLoading } = useQuery({
+  const {
+    data: agentInfo,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["agentInfo", id],
     queryFn: () => agentApi.getAgentId(+(id || 0), { includeChainInfo: true }),
   });
-  const [knowledgeBase, setKnowledgeBase] = useState<IKnowledge[]>(
+  const [knowledgeBase, setKnowledgeBase] = useState<IUpdateKnowledgeRequest[]>(
     agentInfo?.knowledge ?? []
   );
+  const [removeKnowledgeIds, setRemoveKnowledgeIds] = useState<number[]>([]);
   const [settings, setSettings] = useState<Partial<IAgentRequest>>({});
   const handleSaveKnowledge = () => {
     toast.promise(
-      agentApi.updateAgent(+(id || 0), {
-        knowledges: knowledgeBase.map((knowledge) => ({
-          name: knowledge.name,
-          content: knowledge.content,
-        })),
-      }),
+      async () => {
+        await agentApi.updateKnowledge(
+          +(id || 0),
+          removeKnowledgeIds,
+          knowledgeBase
+        );
+        refetch();
+      },
       {
         loading: "Saving...",
         success: "Knowledge saved",
@@ -141,6 +148,9 @@ export default function ManagePage() {
                 <ManageKnowledge
                   agentInfo={agentInfo}
                   setKnowledgeBase={setKnowledgeBase}
+                  setRemoveKnowledgeIds={(ids: number[]) =>
+                    setRemoveKnowledgeIds((prev) => [...prev, ...ids])
+                  }
                 />
               </Tab>
               <Tab

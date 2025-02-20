@@ -1,27 +1,22 @@
-import { IKnowledge } from "@/interfaces/knowledge";
+import { IUpdateKnowledgeRequest } from "@/interfaces/knowledge";
 import { IAgentInfo } from "@/interfaces/agent";
 import KnowledgeForm from "../agent/form/KnowledgeForm";
 
 export default function ManageKnowledge({
   agentInfo,
   setKnowledgeBase,
+  setRemoveKnowledgeIds,
 }: {
   agentInfo: IAgentInfo;
-  setKnowledgeBase: (knowledge: IKnowledge[]) => void;
+  setKnowledgeBase: (knowledge: IUpdateKnowledgeRequest[]) => void;
+  setRemoveKnowledgeIds: (ids: number[]) => void;
 }) {
   return (
     <>
       <KnowledgeForm
         data={agentInfo.knowledge}
-        setData={(knowledges) =>
-          setKnowledgeBase(
-            knowledges.map((k, index) => ({
-              ...k,
-              agentId: agentInfo.id,
-              id: index + 1,
-            }))
-          )
-        }
+        setData={(knowledges) => setKnowledgeBase(knowledges as IUpdateKnowledgeRequest[])}
+        setRemoveKnowledgeIds={(ids: number[]) => setRemoveKnowledgeIds(ids)}
       />
     </>
   );
