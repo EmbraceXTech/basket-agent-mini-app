@@ -5,6 +5,8 @@ import {
   IAgentInfoResponse,
   IAgentRequest,
   IAgentResponse,
+  IWithdrawAssetRequest,
+  IWithdrawAssetResponse,
 } from "@/interfaces/agent.d";
 import tokenApi from "./token.service";
 import chainApi from "./chain.service";
@@ -189,6 +191,18 @@ const updateKnowledge = async (
   return true;
 };
 
+const withdrawAsset = async (agentId: number, data: IWithdrawAssetRequest) => {
+  try {
+    return axiosInstance.post<IWithdrawAssetResponse>(
+      `/agent/${agentId}/wallet/withdraw`,
+      data
+    ).then((res) => res.data);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 const agentApi = {
   createAgent,
   getAgents,
@@ -197,6 +211,7 @@ const agentApi = {
   terminateAgent,
   updateAgent,
   updateKnowledge,
+  withdrawAsset,
 };
 
 export default agentApi;

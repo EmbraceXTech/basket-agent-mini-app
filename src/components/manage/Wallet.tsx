@@ -31,8 +31,6 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
       );
     }
 
-    console.log(tokenBalances);
-
     return (
       <div className="flex flex-col space-y-4">
         {tokenBalances.tokens.map((token, key) => {
@@ -86,6 +84,7 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
           size="lg"
           className="w-full rounded-full text-[#292C33] bg-[#F8F9FB]"
           startContent={<ArrowUpIcon className="w-5 h-5 stroke-[#292C33]" />}
+          onPress={() => navigate(`/manage/${agentInfo.id}/withdraw`)}
         >
           Withdraw
         </Button>

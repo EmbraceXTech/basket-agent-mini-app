@@ -10,6 +10,7 @@ import ManagePage from "@/pages/ManagePage";
 import AssetPage from "@/pages/AssetPage";
 import DepositPage from "@/pages/ManagePage/DepositPage";
 import TokenBalanceGraph from "@/pages/ManagePage/TokenBalanceGraph";
+import WithdrawPage from "@/pages/ManagePage/WithdrawPage";
 
 interface Route {
   path: string;
@@ -30,6 +31,10 @@ export const routes: Route[] = [
   {
     path: "/manage/:id/deposit",
     element: <DepositPage />,
+  },
+  {
+    path: "/manage/:id/withdraw",
+    element: <WithdrawPage />,
   },
   {
     path: "/manage/:id",
