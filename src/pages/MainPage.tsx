@@ -71,11 +71,12 @@ export default function MainPage() {
       <div className="flex-1">
         {agents &&
           agents.map((agent) => (
-            <AgentCard
-              key={agent.id}
-              agent={agent}
-              onToggleStartPause={handleToggleStartPause}
-            />
+            <div key={agent.id} className="mb-4 shadow-sm">
+              <AgentCard
+                agent={agent}
+                onToggleStartPause={handleToggleStartPause}
+              />
+            </div>
           ))}
       </div>
     );

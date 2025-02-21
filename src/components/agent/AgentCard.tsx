@@ -96,15 +96,15 @@ export default function AgentCard({
       </div>
       <div className="flex space-x-3">
         <Button
-          variant="flat"
           onPress={() => handleToggleStartPause(agent.id, agent.isRunning)}
           isDisabled={isLoading}
-          className="rounded-full font-semibold flex-1 bg-secondary-background text-secondary"
+          className={`rounded-full font-semibold flex-1 ${agent.isRunning ? "text-secondary bg-secondary-background" : "text-primary bg-secondary-background border-primary border bg-white"}`}
+          variant={agent.isRunning ? "solid" : "bordered"}
           startContent={
             agent.isRunning ? (
-              <PauseIcon className="w-5 h-5" strokeWidth={4} />
+              <PauseIcon className="w-5 h-5 text-secondary" strokeWidth={4} />
             ) : (
-              <PlayIcon className="w-5 h-5" strokeWidth={4} />
+              <PlayIcon className="w-5 h-5 text-primary" strokeWidth={4} />
             )
           }
         >
