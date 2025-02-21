@@ -119,9 +119,12 @@ export default function WithdrawAsset({
       }
       setIsWithdrawCompleted(true);
       refetchTokenBalances();
-    } catch (e: any) {
-      console.error(e);
-      setWithdrawError(e.message);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        setWithdrawError(e.message);
+      } else {
+        setWithdrawError("An unknown error occurred");
+      }
     }
 
     setIsWithdrawing(false);
