@@ -64,7 +64,8 @@ export default function KnowledgeForm({
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setData(knowledgeBase.map(({ _id, ...rest }) => rest));
-  }, [knowledgeBase, setData]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [knowledgeBase]);
 
   return (
     <div>
