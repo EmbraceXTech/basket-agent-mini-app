@@ -21,13 +21,12 @@ const createAgent = async (data: IAgentRequest): Promise<IAgent> => {
     const payload = {
       ...data,
       knowledges: knowledgeFilter.map((knowledge) => ({
-        ...knowledge,
+        name: knowledge.name,
         content: knowledge.content,
       })),
       intervalSeconds: data.intervalSeconds * 60,
       endDate: data.endDate ? data.endDate.toISOString() : null,
     };
-    console.log(payload);
     const response = await axiosInstance.post<Array<IAgentResponse>>(
       "/agent",
       payload
