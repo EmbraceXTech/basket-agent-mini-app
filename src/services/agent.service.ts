@@ -190,10 +190,25 @@ const terminateAgent = async (agentId: number) => {
 };
 
 const updateAgent = async (agentId: number, data: Partial<IAgentRequest>) => {
-  // TODO: update agent
+  // TODO: Update this function to use one endpoint
   try {
-    console.log("update agent", agentId, data);
-    // await axiosInstance.patch(`/agent/${agentId}`, data);
+    const promises = [];
+    if (data.strategy) {
+      promises.push(axiosInstance.patch(`/agent/${agentId}/strategy`, { strategy: data.strategy }));
+    }
+    if (data.intervalSeconds) {
+      promises.push(axiosInstance.patch(`/agent/${agentId}/interval`, { intervalSeconds: data.intervalSeconds }));
+    }
+    if (data.endDate) {
+      promises.push(axiosInstance.patch(`/agent/${agentId}/end-date`, { endDate: data.endDate }));
+    }
+    if (data.stopLossUSD) {
+      promises.push(axiosInstance.patch(`/agent/${agentId}/stop-loss`, { stopLossUSD: data.stopLossUSD }));
+    }
+    if (data.takeProfitUSD) {
+      promises.push(axiosInstance.patch(`/agent/${agentId}/take-profit`, { takeProfitUSD: data.takeProfitUSD }));
+    }
+    await Promise.all(promises);
     return true;
   } catch (error) {
     console.error(error);
