@@ -1,7 +1,8 @@
 import axiosInstance from "@/core/axios";
+import localStorageUtil from "@/utils/localStorage.util";
 
 const checkAT = async (_accessToken?: string) => {
-  const accessToken = _accessToken ?? localStorage.getItem("accessToken");
+  const accessToken = _accessToken ?? localStorageUtil.getItem("accessToken");
   if (!accessToken) {
     return false;
   }

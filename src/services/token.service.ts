@@ -6,6 +6,7 @@ import {
 } from "@/interfaces/token.d";
 import { ITokenAvailable } from "@/interfaces/token";
 import agentApi from "./agent.service";
+import localStorageUtil from "@/utils/localStorage.util";
 
 const getTokenAvailable = async (
   chainId: string,
@@ -14,7 +15,12 @@ const getTokenAvailable = async (
   const response = await axiosInstance.get<ITokenAvailable[]>(
     `/token/available-tokens?chainId=${chainId}${
       includeTokenBase ? "&includeTokenBase=true" : ""
-    }`
+    }`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
+      },
+    }
   );
   return response.data;
 };
@@ -28,7 +34,14 @@ const getTokenPrice = async (
   const response =
     tokenSymbolsWithoutUSDC.length > 0
       ? await axiosInstance.get<ITokenPriceResponse[]>(
-          `/price/${tokenSymbolsWithoutUSDC.join(",")}`
+          `/price/${tokenSymbolsWithoutUSDC.join(",")}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorageUtil.getItem(
+                "accessToken"
+              )}`,
+            },
+          }
         )
       : { data: [] };
   return [
@@ -64,7 +77,12 @@ const getTokenBalance = async (
 ): Promise<IAgentWalletBalance> => {
   try {
     const response = await axiosInstance.get<IAgentWalletBalanceResponse>(
-      `/agent/${agentId}/wallet/balance`
+      `/agent/${agentId}/wallet/balance`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
+        },
+      }
     );
     let balanceUsd: [string, number][] = [];
     let tokenInfo: ITokenAvailable[] = [];

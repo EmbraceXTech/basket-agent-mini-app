@@ -2,13 +2,19 @@ import axiosInstance from "@/core/axios";
 
 import { IAgentLog, IAgentLogResponse } from "@/interfaces/agentLog";
 import { formatDateOnly } from "@/utils/datetime.util";
+import localStorageUtil from "@/utils/localStorage.util";
 
 const getAll = async (
   agentId: number
 ): Promise<Record<string, IAgentLog[]>> => {
   try {
     const response = await axiosInstance.get<IAgentLogResponse[]>(
-      `/agent/${agentId}/logs`
+      `/agent/${agentId}/logs`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
+        },
+      }
     );
     const groupedLogs = response.data?.reduce((acc, log) => {
       const date = new Date(log.createdAt);

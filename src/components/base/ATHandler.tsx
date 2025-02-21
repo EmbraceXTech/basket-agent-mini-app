@@ -23,6 +23,7 @@ export default function ATHandler({ children }: { children: React.ReactNode }) {
     authApi
       .checkAT(accessToken)
       .then(() => {
+        console.log("accessToken is valid");
         localStorageUtil.setItem("accessToken", accessToken);
       })
       .catch((error) => {
