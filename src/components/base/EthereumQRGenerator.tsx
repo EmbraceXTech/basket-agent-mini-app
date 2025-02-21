@@ -21,7 +21,6 @@ function QRCodeGenerator({
     isErc20: !isNativeToken,
     recipient: !isNativeToken ? to : undefined,
   });
-  console.log(value);
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <QRCodeCanvas value={value} size={200} fgColor="#ff4f29" />

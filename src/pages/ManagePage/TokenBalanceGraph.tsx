@@ -30,7 +30,7 @@ export default function TokenBalanceGraph() {
     enabled: !!id && !!tokenAddress && !!tokenSymbol,
   });
 
-  console.log(tokenBalance);
+  // console.log(tokenBalance);
 
   const { tokenInfo, balanceUsd, balanceToken, tokenPrice } = useMemo(() => {
     return {

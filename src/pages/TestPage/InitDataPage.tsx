@@ -49,7 +49,7 @@ export const InitDataPage: FC = () => {
 
   useEffect(() => {
     getAccessToken().then((token) => {
-      console.log("token:", token);
+      // console.log("token:", token);
       setToken(token);
     });
   }, []);
