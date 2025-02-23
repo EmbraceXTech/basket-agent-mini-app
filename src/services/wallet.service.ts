@@ -14,6 +14,11 @@ const getBalanceChart = async (agentId: string): Promise<IBalanceChart[]> => {
   return response.data;
 };
 
-const walletApi = { getBalanceChart };
+const saveDeposit = async (agentId: string, transactionHash: string) => {
+  const response = await axiosInstance.post(`/agent/${agentId}/wallet/record-deposit`, { transactionHash });
+  return response.data;
+};
+
+const walletApi = { getBalanceChart, saveDeposit };
 
 export default walletApi;

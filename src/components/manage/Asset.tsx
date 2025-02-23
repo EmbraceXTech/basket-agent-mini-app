@@ -3,7 +3,7 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useState } from "react";
-import { Input, Tab, Tabs } from "@heroui/react";
+import { Button, Input, Tab, Tabs } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 
 import { IAgentInfo } from "@/interfaces/agent";
@@ -13,21 +13,32 @@ import EthereumQRGenerator from "../base/EthereumQRGenerator";
 import tokenApi from "@/services/token.service";
 import { useNumberState } from "@/hooks/useNumberState";
 import { parseUnits } from "viem";
+import walletApi from "@/services/wallet.service";
+import toast from "react-hot-toast";
 
 export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
   const [isCopied, setIsCopied] = useState(false);
+  const [tab, setTab] = useState("gasToken");
   const [usdcAmount, setUsdcAmount, usdcAmountString] = useNumberState();
   const [ethAmount, setEthAmount, ethAmountString] = useNumberState();
+  const [usdcTransactionHash, setUsdcTransactionHash] = useState("");
+  const [ethTransactionHash, setEthTransactionHash] = useState("");
+  const [isSavingUSDCDeposit, setIsSavingUSDCDeposit] = useState(false);
+  const [isSavingETHDeposit, setIsSavingETHDeposit] = useState(false);
 
   const { data: tokenInfo } = useQuery({
     queryKey: ["tokenInfo", agentInfo.chainId],
     queryFn: () => tokenApi.getTokenAvailable(agentInfo.chainId, true),
   });
 
-  const { data: tokenPrice, isLoading: isTokenPriceLoading, refetch: refetchTokenPrice } = useQuery({
+  const {
+    data: tokenPrice,
+    isLoading: isTokenPriceLoading,
+    refetch: refetchTokenPrice,
+  } = useQuery({
     queryKey: ["tokenPrices", "USDC", "ETH"],
-    queryFn: () => tokenApi.getTokenPrice(["USDC", "ETH"])
-  })
+    queryFn: () => tokenApi.getTokenPrice(["USDC", "ETH"]),
+  });
 
   const {
     data: tokenBalances,
@@ -89,14 +100,16 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
     if (!tokenPrice || isTokenPriceLoading) {
       return {
         usdcPrice: 0,
-        ethPrice: 0
+        ethPrice: 0,
       };
     }
-    const usdcPrice = tokenPrice.find(token => token.token === "USDC")?.price || 0;
-    const ethPrice = tokenPrice.find(token => token.token === "ETH")?.price || 0;
+    const usdcPrice =
+      tokenPrice.find((token) => token.token === "USDC")?.price || 0;
+    const ethPrice =
+      tokenPrice.find((token) => token.token === "ETH")?.price || 0;
     return {
       usdcPrice,
-      ethPrice
+      ethPrice,
     };
   }, [tokenPrice, isTokenPriceLoading]);
 
@@ -106,6 +119,33 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
     setTimeout(() => {
       setIsCopied(false);
     }, 2000);
+  };
+
+  const handleSaveDeposit = async () => {
+    try {
+      if (tab === "gasToken") {
+        setIsSavingETHDeposit(true);
+        await walletApi.saveDeposit(
+          agentInfo.id.toString() || "",
+          ethTransactionHash
+        );
+        toast.success("ETH deposit saved");
+      } else {
+        setIsSavingUSDCDeposit(true);
+        await walletApi.saveDeposit(
+          agentInfo.id.toString() || "",
+          usdcTransactionHash
+        );
+        toast.success("USDC deposit saved");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to save deposit");
+    }
+
+    setIsSavingETHDeposit(false);
+    setIsSavingUSDCDeposit(false);
+
   };
 
   useEffect(() => {
@@ -150,6 +190,8 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
           classNames={{
             tab: "h-fit",
           }}
+          selectedKey={tab}
+          onSelectionChange={(key) => setTab(key as string)}
         >
           <Tab
             key="gasToken"
@@ -171,10 +213,17 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
                 to={agentInfo.walletKey.address}
                 chainId={agentInfo.chainId}
                 isNativeToken={true}
-                amount={ethAmount ? parseUnits(ethAmount.toString(), gasTokenInfo?.decimals || 18).toString() : undefined}
+                amount={
+                  ethAmount
+                    ? parseUnits(
+                        ethAmount.toString(),
+                        gasTokenInfo?.decimals || 18
+                      ).toString()
+                    : undefined
+                }
               />
             </div>
-            <div className="flex flex-col items-center w-full">
+            <div className="flex flex-col items-center w-full mb-4">
               <Input
                 label={`Amount`}
                 placeholder={`Amount to deposit`}
@@ -191,9 +240,12 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
               <div className="flex items-center justify-between px-2 text-sm text-secondary-text w-full max-w-md">
                 <p className="text-xs font-medium">
                   ~${" "}
-                  {((ethAmount || 0) * priceData.ethPrice).toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })}
+                  {((ethAmount || 0) * priceData.ethPrice).toLocaleString(
+                    undefined,
+                    {
+                      maximumFractionDigits: 2,
+                    }
+                  )}
                 </p>
                 <p className="text-xs font-medium">
                   Available:{" "}
@@ -203,6 +255,27 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
                   ETH
                 </p>
               </div>
+            </div>
+            <div className="flex flex-col items-center w-full">
+              <Input
+                label={`Deposit transaction hash`}
+                placeholder={`Enter deposit transaction hash`}
+                className="w-full max-w-md mb-1"
+                variant="bordered"
+                value={ethTransactionHash}
+                onChange={(e) => setEthTransactionHash(e.target.value)}
+                description="Enter the deposit transaction hash to record agent initial balance."
+              />
+              <Button
+                className="w-full max-w-md mt-2"
+                color="primary"
+                variant="bordered"
+                onPress={handleSaveDeposit}
+                isDisabled={!ethTransactionHash}
+                isLoading={isSavingETHDeposit}
+              >
+                Save
+              </Button>
             </div>
           </Tab>
           <Tab
@@ -225,12 +298,19 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
                 tokenAddress={stableCoinInfo?.address}
                 to={agentInfo.walletKey.address}
                 chainId={agentInfo.chainId}
-                amount={usdcAmount ? parseUnits(usdcAmount.toString(), stableCoinInfo?.decimals || 6).toString() : undefined}
+                amount={
+                  usdcAmount
+                    ? parseUnits(
+                        usdcAmount.toString(),
+                        stableCoinInfo?.decimals || 6
+                      ).toString()
+                    : undefined
+                }
                 isNativeToken={false}
               />
             </div>
 
-            <div className="flex flex-col items-center w-full">
+            <div className="flex flex-col items-center w-full mb-4">
               <Input
                 label={`Amount`}
                 placeholder={`Amount to deposit`}
@@ -248,9 +328,12 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
               <div className="flex items-center justify-between px-2 text-sm text-secondary-text w-full max-w-md">
                 <p className="text-xs font-medium">
                   ~${" "}
-                  {((usdcAmount || 0) * priceData.usdcPrice).toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })}
+                  {((usdcAmount || 0) * priceData.usdcPrice).toLocaleString(
+                    undefined,
+                    {
+                      maximumFractionDigits: 2,
+                    }
+                  )}
                 </p>
                 <p className="text-xs font-medium">
                   Available:{" "}
@@ -260,6 +343,28 @@ export default function ManageAsset({ agentInfo }: { agentInfo: IAgentInfo }) {
                   USDC
                 </p>
               </div>
+            </div>
+
+            <div className="flex flex-col items-center w-full">
+              <Input
+                label={`Deposit transaction hash`}
+                placeholder={`Enter deposit transaction hash`}
+                className="w-full max-w-md mb-1"
+                variant="bordered"
+                value={usdcTransactionHash}
+                onChange={(e) => setUsdcTransactionHash(e.target.value)}
+                description="Enter the deposit transaction hash to record agent initial balance."
+              />
+              <Button
+                className="w-full max-w-md mt-2"
+                color="primary"
+                variant="bordered"
+                onPress={handleSaveDeposit}
+                isDisabled={!usdcTransactionHash}
+                isLoading={isSavingUSDCDeposit}
+              >
+                Save
+              </Button>
             </div>
           </Tab>
         </Tabs>
