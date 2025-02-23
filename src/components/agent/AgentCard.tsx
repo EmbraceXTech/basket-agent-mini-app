@@ -44,10 +44,27 @@ export default function AgentCard({
     }
   };
 
-  // true -> +, false -> -
-  const getPnlStatus = useMemo(() => {
-    return agent.pnl === undefined || agent.pnl === null || agent.pnl >= 0;
-  }, [agent.pnl]);
+  const pnl = useMemo(() => {
+    const equity = agent.equity ?? 0;
+    const balance = agent.totalBalance ?? 0;
+    return equity === 0 ? 0 :(balance - equity);
+  }, [agent])
+
+  const pnlPercent = useMemo(() => {
+    const performance = agent.performance ?? 0;
+    return performance === 0 ? 0 : (performance * 100);
+  }, [agent]);
+
+  const pnlTextColor = useMemo(() => {
+    if (pnl === 0) return "text-gray-500";
+    return pnl > 0 ? "text-green-600" : "text-red-500";
+  }, [pnl]);
+
+  const pnlText = useMemo(() => {
+    if (pnl === 0) return "-";
+    if (pnl > 0) return `+${pnl.toLocaleString(undefined, { maximumFractionDigits: 2 })} (+${formatPercent(pnlPercent)})`;
+    return `${pnl.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${formatPercent(pnlPercent)})`;
+  }, [pnl, pnlPercent]);
 
   return (
     <div
@@ -85,13 +102,9 @@ export default function AgentCard({
             : "$0.00"}
         </div>
         <div
-          className={`text-xl ${
-            getPnlStatus ? "text-green-600" : "text-red-500"
-          }`}
+          className={`text-xl ${pnlTextColor}`}
         >
-          {`${getPnlStatus ? "+" : "-"}${agent.pnl ?? "0.00"}(${
-            getPnlStatus ? "+" : "-"
-          }${formatPercent(agent.pnl)}%)`}
+          {pnlText}
         </div>
       </div>
       <div className="flex space-x-3">

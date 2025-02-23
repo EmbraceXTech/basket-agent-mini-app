@@ -60,8 +60,10 @@ export default function AssetPage() {
         {isLoading ? (
           <Spinner />
         ) : (
-          <div className="text-center text-3xl">
-            {formatUSD(tokenBalances?.balance ?? 0)}
+          <div>
+            <div className="text-center text-3xl">
+              {formatUSD(tokenBalances?.balance ?? 0)}
+            </div>
           </div>
         )}
         <div className="font-medium mt-6 mb-3">Tokens</div>

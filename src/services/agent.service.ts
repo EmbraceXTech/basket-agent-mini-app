@@ -86,9 +86,11 @@ const getAgents = async (
               JSON.parse(token)
             ),
             totalBalance: tokenBalances.balance,
+            performance: tokenBalances.performance,
+            equity: tokenBalances.equity,
             chainInfo: chainInfo.find(
               (chain) => chain.chainId.toString() === agent.chainId
-            ),
+            )
           };
         })
       );

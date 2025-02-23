@@ -45,17 +45,17 @@ export default function TokenCard({
         </div>
       </div>
       <div className="flex flex-col items-end">
-        <div>${balanceUsd[1].toLocaleString(undefined, {
+        <div className="text-lg">${balanceUsd[1].toLocaleString(undefined, {
           maximumFractionDigits:2,
         })}</div>
-        <div
+        {/* <div
           className={`text-sm ${
             getPnlStatus ? "text-green-600" : "text-red-500"
           }`}
         >
           {getPnlStatus ? "+" : "-"}
           {pnl ?? 0.0}%
-        </div>
+        </div> */}
       </div>
     </div>
   );

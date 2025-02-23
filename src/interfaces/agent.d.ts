@@ -52,6 +52,8 @@ export interface IAgentInfoResponse {
 export interface IAgent extends Omit<IAgentResponse, "selectedTokens"> {
   selectedTokens: IToken[];
   totalBalance?: number;
+  performance?: number;
+  equity?: number;
   chainInfo?: IChain;
 }
 

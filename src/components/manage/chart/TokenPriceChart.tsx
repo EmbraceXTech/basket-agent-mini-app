@@ -1,7 +1,7 @@
 // import { AreaChart } from "@/components/base/AreaChart";
 import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis } from "recharts";
 
-const data = [
+const MOCK_DATA = [
   {
     date: "2024-01-01",
     balance: 4000,
@@ -46,11 +46,19 @@ const data = [
   },
 ];
 
-export default function AreaChartAxisLabelsExample() {
+interface Props {
+  data?: {
+    date: string;
+    balance: number;
+  }[];
+}
+
+export default function TokenPriceChart({ data }: Props) {
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart
-        data={data}
+        data={data || MOCK_DATA}
         margin={{
           top: 0,
           right: 0,

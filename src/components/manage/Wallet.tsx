@@ -8,6 +8,8 @@ import TokenCard from "../assets/TokenCard";
 import { Button, Spinner } from "@heroui/react";
 import { formatUSD } from "@/utils/format.util";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/solid";
+import TokenPriceChart from "./chart/TokenPriceChart";
+import walletApi from "@/services/wallet.service";
 
 export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
   const navigate = useNavigate();
@@ -21,6 +23,41 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
         chainId: agentInfo.chainId,
       }),
   });
+
+  const { data: balanceChartData } = useQuery({
+    queryKey: ["balanceChartData", agentInfo.id],
+    queryFn: () =>
+      walletApi.getBalanceChart(agentInfo.id.toString() || ""),
+  });
+
+  const pnlValue = useMemo(() => {
+    if (!tokenBalances || tokenBalances.balance === 0 || tokenBalances.equity === 0) {
+      return null;
+    }
+    return tokenBalances.balance - tokenBalances.equity;
+  }, [tokenBalances]);
+
+  const pnlText = useMemo(() => {
+    if (!pnlValue || !tokenBalances) {
+      return null;
+    }
+
+    const pnlPercent = tokenBalances.performance * 100;
+
+    if (pnlValue > 0) {
+      return `+$${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (+${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
+    }
+
+    return `${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
+    
+  }, [tokenBalances, pnlValue]);
+
+  const pnlTextColor = useMemo(() => {
+    if (!pnlValue || !tokenBalances) {
+      return null;
+    }
+    return pnlValue > 0 ? "text-green-600" : "text-red-500";
+  }, [pnlValue, tokenBalances]);
 
   const TokenList = useMemo(() => {
     if (!tokenBalances || tokenBalances.tokens.length === 0) {
@@ -63,10 +100,16 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
           <Spinner />
         </div>
       ) : (
-        <div className="text-center text-3xl">
-          {tokenBalances?.balance
-            ? formatUSD(tokenBalances?.balance ?? 0)
-            : "$0.00"}
+        <div>
+          <div className="text-center">
+            <div className="text-3xl mb-2">{tokenBalances?.balance
+              ? formatUSD(tokenBalances?.balance ?? 0)
+              : "$0.00"}</div>
+            {pnlText && <div className={`${pnlTextColor}`}>{pnlText}</div>}
+          </div>
+          <div className="h-[150px] w-full mt-6">
+            <TokenPriceChart data={balanceChartData} />
+          </div>
         </div>
       )}
       <div className="flex justify-between items-center px-3 space-x-3 mb-4 mt-6">
