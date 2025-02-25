@@ -98,3 +98,42 @@ export interface IWithdrawAssetResponse {
     wallet_id: string;
   };
 }
+
+export interface BuyDto {
+  tokenAddress: string;
+  usdAmount: number;
+}
+
+export interface SellDto {
+  tokenAddress: string;
+  tokenAmount: number;
+}
+
+export type TradeStep = {
+  type: 'buy';
+  data: BuyDto;
+  reason: string;
+} | {
+  type: 'sell';
+  data: SellDto;
+  reason: string;
+}
+
+export type TradePlan = {
+  steps: TradeStep[];
+}
+
+export interface TradeStep {
+  step: number;
+  thought: string;
+  action: string;
+}
+
+export interface ISimulateTradeRequest {
+  strategyDescription: string
+}
+
+export interface ISimulateTradeResponse {
+  thoughts: string;
+  tradeSteps: TradeStep[];
+}

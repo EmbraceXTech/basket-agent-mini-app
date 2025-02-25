@@ -1,9 +1,27 @@
-import { Input, Select, SelectItem, Textarea } from "@heroui/react";
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  Textarea,
+  useDisclosure,
+} from "@heroui/react";
 import { useEffect, useState } from "react";
 import { IToken, ITokenAvailable } from "@/interfaces/token";
-import { IAgent, IAgentRequest } from "@/interfaces/agent";
+import {
+  IAgent,
+  IAgentRequest,
+  ISimulateTradeResponse,
+} from "@/interfaces/agent";
 import tokenApi from "@/services/token.service";
 import BaseDatepicker from "../base/Datepicker";
+import agentApi from "@/services/agent.service";
+import TokenTrade from "./TokenTrade";
 
 export default function ManageSettings({
   agentInfo,
@@ -17,6 +35,11 @@ export default function ManageSettings({
   );
   const [tokenList, setTokenList] = useState<ITokenAvailable[]>([]);
   const [isLoadingTokens, setIsLoadingTokens] = useState(false);
+
+  const modal = useDisclosure();
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [simulateResult, setSimulateResult] =
+    useState<ISimulateTradeResponse | null>(null);
 
   useEffect(() => {
     const fetchTokens = async () => {
@@ -36,6 +59,7 @@ export default function ManageSettings({
 
     fetchTokens();
   }, [agentInfo?.chainId]);
+
   const [strategy, setStrategy] = useState(agentInfo.strategy ?? "");
   const [tackProfit, setTackProfit] = useState("");
   const [stopLoss, setStopLoss] = useState("");
@@ -90,6 +114,21 @@ export default function ManageSettings({
     endDate,
     // setSettings,
   ]);
+
+  const handleSimulateTrade = async () => {
+    setIsSimulating(true);
+    try {
+      modal.onOpen();
+      const response = await agentApi.simulateTrade(agentInfo.id, {
+        strategyDescription: strategy,
+      });
+      setSimulateResult(response);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsSimulating(false);
+  };
+
   return (
     <>
       {/* Choose tokens */}
@@ -151,16 +190,29 @@ export default function ManageSettings({
       </Select>
       {/* Strategies */}
       <div className="text-lg font-medium my-2">Strategies</div>
-      <Textarea
-        // label="Custom Strategy"
-        placeholder="Input your prompt strategy"
-        value={strategy}
-        className="mt-3"
-        onChange={(e) => {
-          setStrategy(e.target.value);
-        }}
-        minRows={8}
-      />
+      <div>
+        <Textarea
+          // label="Custom Strategy"
+          placeholder="Input your prompt strategy"
+          value={strategy}
+          className="mt-3 mb-2"
+          onChange={(e) => {
+            setStrategy(e.target.value);
+          }}
+          minRows={8}
+        />
+      </div>
+      <div className="flex justify-end">
+        <Button
+          color="primary"
+          variant="bordered"
+          fullWidth
+          onPress={modal.onOpen}
+        >
+          Simulate Trade
+        </Button>
+      </div>
+
       {/* Tack profit */}
       <div className="text-lg font-medium my-2">Tack profit</div>
       <Input
@@ -227,6 +279,67 @@ export default function ManageSettings({
           placeholder="Select End Date"
         />
       </div>
+      <Modal isOpen={modal.isOpen} onClose={modal.onClose}>
+        <ModalContent>
+          <ModalHeader>
+            <h1>Simulate Trade</h1>
+          </ModalHeader>
+          <ModalBody>
+            <div className="mb-2">
+              <h2 className="mb-1 underline">Thoughts</h2>
+              <p className="text-sm text-gray-500">
+                {!simulateResult ? "-" : simulateResult?.thoughts}
+              </p>
+            </div>
+            <div>
+              <h2 className="mb-1 underline">Trade Steps</h2>
+              {(!simulateResult || simulateResult?.tradeSteps.length === 0) ? "-" : simulateResult?.tradeSteps.map((step, index) => {
+                const tokenInfo = tokenList.find(
+                  (token) =>
+                    token.address.toLowerCase() ===
+                    step.data.tokenAddress.toLowerCase()
+                );
+
+                return (
+                  <div
+                    key={index}
+                    className="flex flex-col gap-2 border border-gray-200 rounded-md p-2 mb-1"
+                  >
+                    <TokenTrade 
+                      tokenInfo={tokenInfo} 
+                      action={step.type} 
+                      amount={step.type === "buy" ? step.data.usdAmount : step.data.tokenAmount}
+                    />
+
+                    {/* <p>{step.type}</p>
+                    {step.type === "buy" && (
+                      <>
+                        <p>{(step.data as BuyDto).tokenAddress}</p>
+                        <p>{(step.data as BuyDto).usdAmount}</p>
+                      </>
+                    )}
+                    {step.type === "sell" && (
+                      <>
+                        <p>{(step.data as SellDto).tokenAddress}</p>
+                        <p>{(step.data as SellDto).tokenAmount}</p>
+                      </>
+                    )}
+                    <p>{step.reason}</p> */}
+                  </div>
+                );
+              })}
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" variant="bordered" onPress={handleSimulateTrade} isLoading={isSimulating} fullWidth>
+              Simulate
+            </Button>
+            <Button color="default" variant="bordered" onPress={modal.onClose} fullWidth>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

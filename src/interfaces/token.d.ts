@@ -23,6 +23,7 @@ export interface ITokenAvailable {
 
 export interface IAgentWalletBalanceResponse {
   tokens: [string, string][]; // [tokenSymbol, balanceToken]
+  tokenValues: [string, number][]; // [tokenSymbol, balanceToken]
   balance: number;
   equity: number;
   performance: number;

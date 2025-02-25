@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ITokenAvailable } from "@/interfaces/token";
@@ -14,13 +13,6 @@ export default function TokenCard({
   balanceUsd: [string, number];
   agentId: number;
 }) {
-  // true -> +, false -> -
-  const pnl = 0;
-  const getPnlStatus = useMemo(() => {
-    // return token.pnl === undefined || token.pnl === null || token.pnl >= 0;
-    return true;
-    // }, [token.pnl]);
-  }, []);
   const navigate = useNavigate();
   return (
     <div

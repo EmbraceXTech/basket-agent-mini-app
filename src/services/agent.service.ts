@@ -5,6 +5,8 @@ import {
   IAgentInfoResponse,
   IAgentRequest,
   IAgentResponse,
+  ISimulateTradeRequest,
+  ISimulateTradeResponse,
   IWithdrawAssetRequest,
   IWithdrawAssetResponse,
 } from "@/interfaces/agent.d";
@@ -263,6 +265,19 @@ const withdrawAsset = async (agentId: number, data: IWithdrawAssetRequest) => {
     console.error(error);
     throw error;
   }
+};  
+
+const simulateTrade = async (agentId: number, data: ISimulateTradeRequest) => {
+  try {
+    return axiosInstance.post<ISimulateTradeResponse>(`/agent/${agentId}/simulate-trade`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
+      },
+    }).then(res => res.data);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 const agentApi = {
@@ -274,6 +289,7 @@ const agentApi = {
   updateAgent,
   updateKnowledge,
   withdrawAsset,
+  simulateTrade
 };
 
 export default agentApi;

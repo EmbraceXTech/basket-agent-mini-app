@@ -71,12 +71,10 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
     return (
       <div className="flex flex-col space-y-4">
         {tokenBalances.tokens.map((token, key) => {
+          const tokenValue = tokenBalances.tokenValues[key];
           const tokenInfo = tokenBalances.tokenInfo?.find(
             (t) => t.symbol.toLowerCase() === token[0].toLowerCase()
           );
-          const balanceUsd = tokenBalances.balanceUsd?.find(
-            (t) => t[0].toLowerCase() === token[0].toLowerCase()
-          ) ?? [token[0], 0];
           if (!tokenInfo) {
             return null;
           }
@@ -86,7 +84,7 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
               agentId={agentInfo.id}
               token={token}
               tokenInfo={tokenInfo}
-              balanceUsd={balanceUsd}
+              balanceUsd={tokenValue}
             />
           );
         })}

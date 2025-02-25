@@ -58,9 +58,7 @@ const getTokenPrice = async (
 const getTokenBalance = async (
   agentId: string,
   {
-    addUsdBalance,
     addTokenInfo,
-    selectTokenSymbol,
     includeTokenBase,
   }: {
     addUsdBalance?: boolean;
@@ -84,7 +82,6 @@ const getTokenBalance = async (
         },
       }
     );
-    let balanceUsd: [string, number][] = [];
     let tokenInfo: ITokenAvailable[] = [];
     let tokenPrice: ITokenPriceResponse[] = [];
     if (response.data.tokens.length === 0) {
@@ -94,32 +91,32 @@ const getTokenBalance = async (
         tokenInfo: [] as ITokenAvailable[],
       };
     }
-    if (addUsdBalance) {
-      const tokenFocuses =
-        selectTokenSymbol && selectTokenSymbol.length > 0
-          ? selectTokenSymbol.map((token) => token.toUpperCase())
-          : response.data.tokens
-              .map((token) => token[0].toUpperCase())
-              .filter((token) => token !== "USDC");
-      tokenPrice = await getTokenPrice(tokenFocuses);
-      balanceUsd =
-        selectTokenSymbol && selectTokenSymbol.length > 0
-          ? selectTokenSymbol.map((token) => {
-              const convertRate = tokenPrice.find(
-                (price) => price.token === token
-              );
-              const _balance = response.data.tokens.find(
-                (t) => t[0].toUpperCase() === token.toUpperCase()
-              ) || ["", ""];
-              return [token, +_balance[1] * (convertRate?.price ?? 1)];
-            })
-          : response.data.tokens.map((token) => {
-              const convertRate = tokenPrice.find(
-                (price) => price.token === token[0].toUpperCase()
-              );
-              return [token[0], +token[1] * (convertRate?.price ?? 1)];
-            });
-    }
+    // if (addUsdBalance) {
+    //   const tokenFocuses =
+    //     selectTokenSymbol && selectTokenSymbol.length > 0
+    //       ? selectTokenSymbol.map((token) => token.toUpperCase())
+    //       : response.data.tokens
+    //           .map((token) => token[0].toUpperCase())
+    //           .filter((token) => token !== "USDC");
+    //   tokenPrice = await getTokenPrice(tokenFocuses);
+    //   balanceUsd =
+    //     selectTokenSymbol && selectTokenSymbol.length > 0
+    //       ? selectTokenSymbol.map((token) => {
+    //           const convertRate = tokenPrice.find(
+    //             (price) => price.token === token
+    //           );
+    //           const _balance = response.data.tokens.find(
+    //             (t) => t[0].toUpperCase() === token.toUpperCase()
+    //           ) || ["", ""];
+    //           return [token, +_balance[1] * (convertRate?.price ?? 1)];
+    //         })
+    //       : response.data.tokens.map((token) => {
+    //           const convertRate = tokenPrice.find(
+    //             (price) => price.token === token[0].toUpperCase()
+    //           );
+    //           return [token[0], +token[1] * (convertRate?.price ?? 1)];
+    //         });
+    // }
     if (addTokenInfo) {
       const agent = await agentApi.getAgentId(+agentId);
       const _tokenInfo = await getTokenAvailable(
@@ -131,7 +128,7 @@ const getTokenBalance = async (
         symbol: token.symbol.toUpperCase(),
       }));
     }
-    return { ...response.data, balanceUsd, tokenInfo, tokenPrice };
+    return { ...response.data, balanceUsd: response.data.tokenValues, tokenInfo, tokenPrice };
   } catch (error) {
     console.error(error);
     throw error;
