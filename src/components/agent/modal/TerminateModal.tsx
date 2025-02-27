@@ -9,6 +9,7 @@ import {
 } from "@heroui/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function TerminateModal({
   isOpen,
@@ -21,6 +22,7 @@ export default function TerminateModal({
   onOpenChange: () => void;
   agentId: number;
 }) {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const handleTerminate = async () => {
     setIsLoading(true);
@@ -28,6 +30,7 @@ export default function TerminateModal({
       async () => {
         try {
           await agentApi.terminateAgent(agentId);
+          navigate("/agent");
         } catch (error) {
           console.error(error);
           throw error;
@@ -58,7 +61,8 @@ export default function TerminateModal({
             </ModalHeader>
             <ModalBody>
               <p className="text-center text-secondary-text">
-                You's lose offline access to all your assets sessions.
+                You will lose offline access to all your assets and this agent
+                will be deleted.
               </p>
             </ModalBody>
             <ModalFooter className="flex flex-col">

@@ -92,7 +92,7 @@ const getAgents = async (
             equity: tokenBalances.equity,
             chainInfo: chainInfo.find(
               (chain) => chain.chainId.toString() === agent.chainId
-            )
+            ),
           };
         })
       );
@@ -184,8 +184,7 @@ const getAgentId = async (
 const terminateAgent = async (agentId: number) => {
   // TODO: terminate agent
   try {
-    // await axiosInstance.delete(`/agent/${agentId}`);
-    console.log(`terminate agent ${agentId}`);
+    await axiosInstance.delete(`/agent/${agentId}`);
     return true;
   } catch (error) {
     console.error(error);
@@ -198,19 +197,39 @@ const updateAgent = async (agentId: number, data: Partial<IAgentRequest>) => {
   try {
     const promises = [];
     if (data.strategy) {
-      promises.push(axiosInstance.patch(`/agent/${agentId}/strategy`, { strategy: data.strategy }));
+      promises.push(
+        axiosInstance.patch(`/agent/${agentId}/strategy`, {
+          strategy: data.strategy,
+        })
+      );
     }
     if (data.intervalSeconds) {
-      promises.push(axiosInstance.patch(`/agent/${agentId}/interval`, { intervalSeconds: data.intervalSeconds }));
+      promises.push(
+        axiosInstance.patch(`/agent/${agentId}/interval`, {
+          intervalSeconds: data.intervalSeconds,
+        })
+      );
     }
     if (data.endDate) {
-      promises.push(axiosInstance.patch(`/agent/${agentId}/end-date`, { endDate: data.endDate }));
+      promises.push(
+        axiosInstance.patch(`/agent/${agentId}/end-date`, {
+          endDate: data.endDate,
+        })
+      );
     }
     if (data.stopLossUSD) {
-      promises.push(axiosInstance.patch(`/agent/${agentId}/stop-loss`, { stopLossUSD: data.stopLossUSD }));
+      promises.push(
+        axiosInstance.patch(`/agent/${agentId}/stop-loss`, {
+          stopLossUSD: data.stopLossUSD,
+        })
+      );
     }
     if (data.takeProfitUSD) {
-      promises.push(axiosInstance.patch(`/agent/${agentId}/take-profit`, { takeProfitUSD: data.takeProfitUSD }));
+      promises.push(
+        axiosInstance.patch(`/agent/${agentId}/take-profit`, {
+          takeProfitUSD: data.takeProfitUSD,
+        })
+      );
     }
     await Promise.all(promises);
     return true;
@@ -265,15 +284,17 @@ const withdrawAsset = async (agentId: number, data: IWithdrawAssetRequest) => {
     console.error(error);
     throw error;
   }
-};  
+};
 
 const simulateTrade = async (agentId: number, data: ISimulateTradeRequest) => {
   try {
-    return axiosInstance.post<ISimulateTradeResponse>(`/agent/${agentId}/simulate-trade`, data, {
-      headers: {
-        Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
-      },
-    }).then(res => res.data);
+    return axiosInstance
+      .post<ISimulateTradeResponse>(`/agent/${agentId}/simulate-trade`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
+        },
+      })
+      .then((res) => res.data);
   } catch (error) {
     console.error(error);
     throw error;
@@ -289,7 +310,7 @@ const agentApi = {
   updateAgent,
   updateKnowledge,
   withdrawAsset,
-  simulateTrade
+  simulateTrade,
 };
 
 export default agentApi;

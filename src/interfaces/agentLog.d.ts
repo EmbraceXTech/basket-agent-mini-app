@@ -2,10 +2,8 @@ export interface IAgentLogResponse {
   id: number;
   createdAt: Date;
   agentId: number;
-  thought: string;
-  action: string;
-  amount: number;
-  tokenAddr: string;
+  content: string;
+  logType: string;
 }
 
 export type IAgentLog = IAgentLogResponse;

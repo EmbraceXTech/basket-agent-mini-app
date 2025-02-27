@@ -7,6 +7,11 @@ import agentLogService from "@/services/agentLog.service";
 
 import LogCard from "./manage-log/LogCard";
 import tokenService from "@/services/token.service";
+import { LOG_TYPE } from "@/constants/log.constant";
+import LogTradePlan from "./manage-log/LogTradePlan";
+import LogTradeError from "./manage-log/LogTradeError";
+import LogDeposit from "./manage-log/logDeposit";
+import LogWithdraw from "./manage-log/LogWithdraw";
 
 export default function ManageLogs({ agentInfo }: { agentInfo: IAgentInfo }) {
   const { data: logs, isLoading } = useQuery({
@@ -35,17 +40,15 @@ export default function ManageLogs({ agentInfo }: { agentInfo: IAgentInfo }) {
             </div>
             <div className="flex flex-col space-y-3">
               {logs.map((log) => {
-                const _tokenInfo = tokenInfo?.find(
-                  (token) => token.address === log.tokenAddr
-                );
-                return (
-                  <LogCard
-                    key={log.id}
-                    log={log}
-                    chainName={agentInfo.chainInfo?.name || ""}
-                    tokenInfo={_tokenInfo}
-                  />
-                );
+                if (log.logType === LOG_TYPE.TRADE_PLAN) {
+                  return <LogTradePlan key={log.id} logData={log.content} />;
+                } else if (log.logType === LOG_TYPE.TRADE_ERROR) {
+                  return <LogTradeError key={log.id} logData={log.content} />;
+                } else if (log.logType === LOG_TYPE.DEPOSIT) {
+                  return <LogDeposit key={log.id} logData={log.content} />;
+                } else if (log.logType === LOG_TYPE.WITHDRAWAL) {
+                  return <LogWithdraw key={log.id} logData={log.content} />;
+                }
               })}
             </div>
           </div>
