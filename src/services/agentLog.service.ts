@@ -4,30 +4,31 @@ import { IAgentLog, IAgentLogResponse } from "@/interfaces/agentLog";
 import { formatDateOnly } from "@/utils/datetime.util";
 import localStorageUtil from "@/utils/localStorage.util";
 
-const getAll = async (
-  agentId: number
-): Promise<Record<string, IAgentLog[]>> => {
+interface GetAllParams {
+  agentId: number;
+  page?: number;
+  limit?: number;
+}
+
+const getAll = async ({
+  agentId,
+  page = 1,
+  limit = 10,
+}: GetAllParams): Promise<IAgentLogResponse> => {
   try {
-    const response = await axiosInstance.get<IAgentLogResponse[]>(
+    const response = await axiosInstance.get<IAgentLogResponse>(
       `/agent/${agentId}/logs`,
       {
+        params: {
+          page,
+          limit,
+        },
         headers: {
           Authorization: `Bearer ${localStorageUtil.getItem("accessToken")}`,
         },
       }
     );
-    const groupedLogs = response.data?.reduce((acc, log) => {
-      const date = new Date(log.createdAt);
-      const dateString = formatDateOnly(date);
-      if (!acc[dateString]) {
-        acc[dateString] = [log];
-      } else {
-        acc[dateString].push(log);
-      }
-      return acc;
-    }, {} as Record<string, IAgentLog[]>);
-
-    return groupedLogs;
+    return response.data;
   } catch (error) {
     console.error(error);
     throw error;

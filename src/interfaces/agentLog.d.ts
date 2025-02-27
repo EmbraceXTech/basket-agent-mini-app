@@ -1,4 +1,4 @@
-export interface IAgentLogResponse {
+export interface IAgentLog {
   id: number;
   createdAt: Date;
   agentId: number;
@@ -6,4 +6,12 @@ export interface IAgentLogResponse {
   logType: string;
 }
 
-export type IAgentLog = IAgentLogResponse;
+export interface IAgentLogResponse {
+  data: IAgentLog[];
+  meta: {
+    currentPage: number;
+    itemsPerPage: number;
+    totalItems: number;
+    totalPages: number;
+  };
+}

@@ -29,7 +29,7 @@ export default function LogTradeError(props: { logData: string }) {
       </div>
 
       <div className="bg-red-50 border border-red-100 rounded-md p-4">
-        <p className="text-sm text-red-700 leading-relaxed">
+        <p className="text-sm text-red-700 leading-relaxed break-words">
           {tradeError?.error?.message || "No error message"}
         </p>
       </div>
