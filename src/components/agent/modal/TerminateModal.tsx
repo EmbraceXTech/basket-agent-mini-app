@@ -42,7 +42,7 @@ export default function TerminateModal({
       {
         loading: "Terminating agent...",
         success: "Agent terminated successfully",
-        error: "Failed to terminate agent",
+        error: (error) => error.response.data.message,
       }
     );
   };
