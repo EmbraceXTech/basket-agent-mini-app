@@ -71,7 +71,7 @@ export default function KnowledgeForm({
     <div>
       {knowledgeBase.map((knowledge) => (
         <div key={knowledge._id}>
-          <div key={knowledge.id} className="flex items-center">
+          <div key={knowledge.id} className="flex items-start">
             <div className="grid grid-cols-9 gap-3 mb-4 flex-1">
               <div className="contents">
                 <div className="text-[#AEB2BD] text-xs col-span-1">#</div>
@@ -105,6 +105,7 @@ export default function KnowledgeForm({
               </div>
             </div>
             <Button
+              className="mt-7"
               onPress={() => handleDeleteKnowledge(knowledge._id)}
               variant="light"
               isIconOnly

@@ -61,7 +61,7 @@ export default function CreatePage() {
           <div className="w-full flex justify-center"></div>
           <CreateAgentForm currentStep={currentStep} />
         </div>
-        <div className="mt-4">
+        <div className="mt-4 pb-4">
           {currentStep < totalSteps - 3 ? (
             <Button
               className="w-full bg-[#FF4F29] text-white rounded-full font-medium"

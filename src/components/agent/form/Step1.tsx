@@ -40,7 +40,10 @@ export default function Step1() {
       setIsLoadingTokens(true);
       try {
         const tokens = await tokenApi.getTokenAvailable(data.chainId || "");
-        setTokens(tokens);
+        const filteredStableCoinTokens = tokens.filter(
+          (token) => !["USDC", "USDT", "DAI"].includes(token.symbol.toUpperCase())
+        );
+        setTokens(filteredStableCoinTokens);
       } catch (error) {
         console.error(error);
       } finally {

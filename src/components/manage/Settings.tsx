@@ -61,7 +61,7 @@ export default function ManageSettings({
   }, [agentInfo?.chainId]);
 
   const [strategy, setStrategy] = useState(agentInfo.strategy ?? "");
-  const [tackProfit, setTackProfit] = useState("");
+  const [takeProfit, setTakeProfit] = useState("");
   const [stopLoss, setStopLoss] = useState("");
 
   const [intervalSet, setIntervalSet] = useState(
@@ -96,8 +96,8 @@ export default function ManageSettings({
       selectedTokens: chooseTokens,
       strategy,
       takeProfitUSD:
-        tackProfit && tackProfit.length > 0
-          ? parseFloat(tackProfit)
+        takeProfit && takeProfit.length > 0
+          ? parseFloat(takeProfit)
           : undefined,
       stopLossUSD:
         stopLoss && stopLoss.length > 0 ? parseFloat(stopLoss) : undefined,
@@ -108,7 +108,7 @@ export default function ManageSettings({
   }, [
     chooseTokens,
     strategy,
-    tackProfit,
+    takeProfit,
     stopLoss,
     intervalSet,
     endDate,
@@ -213,13 +213,13 @@ export default function ManageSettings({
         </Button>
       </div>
 
-      {/* Tack profit */}
-      <div className="text-lg font-medium my-2">Tack profit</div>
+      {/* Take Profit */}
+      <div className="text-lg font-medium my-2">Take Profit</div>
       <Input
-        placeholder="Trigger sell price"
-        value={tackProfit}
+        placeholder="Trigger take profit price"
+        value={takeProfit}
         onChange={(e) => {
-          setTackProfit(e.target.value);
+          setTakeProfit(e.target.value);
         }}
       />
       <div className="text-xs text-gray-500 my-2">
@@ -229,7 +229,7 @@ export default function ManageSettings({
       {/* Stop loss */}
       <div className="text-lg font-medium my-2">Stop loss</div>
       <Input
-        placeholder="Trigger sell price"
+        placeholder="Trigger stop loss price"
         value={stopLoss}
         onChange={(e) => {
           setStopLoss(e.target.value);

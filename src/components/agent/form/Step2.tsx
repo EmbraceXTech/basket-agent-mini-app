@@ -2,6 +2,7 @@ import useStepperStore from "@/stores/createAgent.store";
 import { RadioGroup, Radio, cn, RadioProps, Textarea } from "@heroui/react";
 import { useEffect } from "react";
 import FormHeader from "./FormHeader";
+import { PRESET_STRATEGY_LIST } from "@/constants/preset-strategies.constant";
 
 interface CustomRadioProps extends RadioProps {
   children: React.ReactNode;
@@ -24,10 +25,12 @@ export const CustomRadio = (props: CustomRadioProps) => {
         labelWrapper: "w-screen",
       }}
     >
-      <div className="flex items-center space-x-3">
+      <div className="flex items-start space-x-3">
         {iconPath && (
-          <div className="rounded-full bg-[#FFF0F1] w-10 h-10 p-1 flex items-center justify-center">
-            <img src={iconPath} width={24} height={24} />
+          <div className="pt-1">
+            <div className="rounded-full bg-[#FFF0F1] w-10 h-10 p-1 flex items-center justify-center">
+              <img src={iconPath} width={24} height={24} />
+            </div>
           </div>
         )}
         <div>
@@ -42,27 +45,7 @@ export const CustomRadio = (props: CustomRadioProps) => {
 // Strategy
 export default function Step2() {
   const { data, setData, setCanNext, canNext } = useStepperStore();
-  const strategySets = [
-    {
-      id: 1,
-      name: "Basket Trade1",
-      description: "Basket Trade1 description",
-      value: "basketTrade1",
-      iconPath: "/public/empty-bot.png",
-    },
-    {
-      id: 2,
-      name: "Basket Trade2",
-      description: "Basket Trade2 description",
-      value: "basketTrade2",
-    },
-    {
-      id: 3,
-      name: "Custom Strategy",
-      description: "Custom Strategy description",
-      value: "customStrategy",
-    },
-  ];
+  const strategySets = PRESET_STRATEGY_LIST;
   useEffect(() => {
     if (data.strategy && data.strategy?.length > 0) {
       setCanNext(true);
