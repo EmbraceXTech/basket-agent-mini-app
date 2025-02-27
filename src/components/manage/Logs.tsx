@@ -5,7 +5,6 @@ import { isToday } from "date-fns";
 import { IAgentInfo } from "@/interfaces/agent";
 import agentLogService from "@/services/agentLog.service";
 
-import LogCard from "./manage-log/LogCard";
 import tokenService from "@/services/token.service";
 import { LOG_TYPE } from "@/constants/log.constant";
 import LogTradePlan from "./manage-log/LogTradePlan";
