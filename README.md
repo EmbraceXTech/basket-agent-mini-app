@@ -2,6 +2,8 @@
 
 Basket Agent is a Telegram MiniApp that allows users to buy and sell tokens using an agent-based trading strategy. The application is designed to optimize trades for better efficiency and performance, leveraging automated strategies to maximize profitability while minimizing risks.
 
+Join us and start trading smarter with Basket Agent on Telegram!: [@basket_agent_bot](https://t.me/basket_agent_bot)
+
 ## Features
 
 - Agent-Based Trading: The app uses AI-driven agents to analyze market trends and execute trades based on predefined strategies.
