@@ -1,7 +1,6 @@
 import axiosInstance from "@/core/axios";
 
-import { IAgentLog, IAgentLogResponse } from "@/interfaces/agentLog";
-import { formatDateOnly } from "@/utils/datetime.util";
+import { IAgentLogResponse } from "@/interfaces/agentLog";
 import localStorageUtil from "@/utils/localStorage.util";
 
 interface GetAllParams {
