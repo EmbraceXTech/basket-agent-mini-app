@@ -47,7 +47,7 @@ export default function LogWithdraw(props: {
           />
           <div>
             <div className="text-lg font-medium text-gray-900">
-              {withdraw.metadata.amount.toLocaleString(undefined)}{" "}
+              {withdraw.metadata.amount ? withdraw.metadata.amount.toLocaleString(undefined) : 0}{" "}
               {withdraw.metadata.token}
             </div>
             <div className="text-sm text-gray-500">Amount Withdrawn</div>

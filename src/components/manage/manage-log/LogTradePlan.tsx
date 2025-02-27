@@ -78,7 +78,7 @@ export default function LogTradePlan(props: {
                       </span>
                       <span className="text-sm text-gray-500">
                         {_tokenInfo?.symbol} •{" "}
-                        {step.data.tokenAmount.toLocaleString(undefined)}
+                        {step.data.tokenAmount ? step.data.tokenAmount.toLocaleString(undefined) : 0}
                       </span>
                     </div>
                     <p className="text-sm text-gray-700">{step.reason}</p>

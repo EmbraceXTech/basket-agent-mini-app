@@ -45,7 +45,7 @@ export default function LogDeposit(props: {
           />
           <div>
             <div className="text-lg font-medium text-gray-900">
-              {deposit.amount.toLocaleString(undefined)}{" "}
+              {deposit.amount ? deposit.amount.toLocaleString(undefined) : 0}{" "}
               {deposit.token}
             </div>
             <div className="text-sm text-gray-500">Amount Deposited</div>
