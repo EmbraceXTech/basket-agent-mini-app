@@ -1,13 +1,11 @@
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
-import PrivyProvider from "@/core/privy/provider.tsx";
 import { TanstackQueryProvider } from "./core/tanstack-query/provider";
 
 import { App } from "@/App";
 import ATHandler from "./components/base/ATHandler";
 import { ErrorBoundary } from "@/components/base/ErrorBoundary";
-
-
+import { ParaProviders } from "./core/para/provider";
 
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
@@ -30,12 +28,12 @@ export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <TanstackQueryProvider>
-        <PrivyProvider>
+        <ParaProviders>
           <ATHandler>
             <App />
             <Toaster />
           </ATHandler>
-        </PrivyProvider>
+        </ParaProviders>
       </TanstackQueryProvider>
     </ErrorBoundary>
   );

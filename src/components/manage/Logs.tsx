@@ -9,6 +9,10 @@ import { useEffect, useRef } from "react";
 import { IAgentInfo } from "@/interfaces/agent";
 import { IAgentLog, IAgentLogResponse } from "@/interfaces/agentLog";
 import agentLogService from "@/services/agentLog.service";
+<<<<<<< HEAD
+=======
+
+>>>>>>> f522e2fedc71da485bc38b19c74100d842afb6a6
 import tokenService from "@/services/token.service";
 import { LOG_TYPE } from "@/constants/log.constant";
 import LogTradePlan from "./manage-log/LogTradePlan";
