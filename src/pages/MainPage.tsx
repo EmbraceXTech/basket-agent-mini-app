@@ -88,7 +88,7 @@ export default function MainPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#ff4f29]/0 to-[#ff4f29]/20 to-90% h-[200px] -z-10" />
         <Header
           title="Basket Agent"
-          right={<ClockIcon className="w-6 h-6" />}
+          // right={<ClockIcon className="w-6 h-6" />}
         />
         {isLoading ? (
           <div className="flex-1 flex flex-col space-y-4 items-center justify-center h-full">

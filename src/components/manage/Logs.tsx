@@ -21,7 +21,7 @@ export default function ManageLogs({ agentInfo }: { agentInfo: IAgentInfo }) {
 
   const { data: tokenInfo } = useQuery({
     queryKey: ["tokenInfo", agentInfo.chainId],
-    queryFn: () => tokenService.getTokenAvailable(agentInfo.chainId),
+    queryFn: () => tokenService.getTokenAvailable(agentInfo.chainId, true),
     enabled: !!agentInfo.chainId,
   });
 
@@ -41,13 +41,31 @@ export default function ManageLogs({ agentInfo }: { agentInfo: IAgentInfo }) {
             <div className="flex flex-col space-y-3">
               {logs.map((log) => {
                 if (log.logType === LOG_TYPE.TRADE_PLAN) {
-                  return <LogTradePlan key={log.id} logData={log.content} />;
+                  return (
+                    <LogTradePlan
+                      key={log.id}
+                      logData={log.content}
+                      tokenInfo={tokenInfo}
+                    />
+                  );
                 } else if (log.logType === LOG_TYPE.TRADE_ERROR) {
                   return <LogTradeError key={log.id} logData={log.content} />;
                 } else if (log.logType === LOG_TYPE.DEPOSIT) {
-                  return <LogDeposit key={log.id} logData={log.content} />;
+                  return (
+                    <LogDeposit
+                      key={log.id}
+                      logData={log.content}
+                      tokenInfo={tokenInfo}
+                    />
+                  );
                 } else if (log.logType === LOG_TYPE.WITHDRAWAL) {
-                  return <LogWithdraw key={log.id} logData={log.content} />;
+                  return (
+                    <LogWithdraw
+                      key={log.id}
+                      logData={log.content}
+                      tokenInfo={tokenInfo}
+                    />
+                  );
                 }
               })}
             </div>
