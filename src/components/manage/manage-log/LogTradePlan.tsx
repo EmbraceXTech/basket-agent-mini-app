@@ -77,7 +77,8 @@ export default function LogTradePlan(props: {
                         {step.type.toUpperCase()}
                       </span>
                       <span className="text-sm text-gray-500">
-                        {_tokenInfo?.symbol} • {step.data.tokenAmount}
+                        {_tokenInfo?.symbol} •{" "}
+                        {step.data.tokenAmount.toLocaleString(undefined)}
                       </span>
                     </div>
                     <p className="text-sm text-gray-700">{step.reason}</p>

@@ -44,11 +44,15 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
 
     const pnlPercent = tokenBalances.performance * 100;
 
+    if (pnlValue === 0) {
+      return `$${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+    }
+
     if (pnlValue > 0) {
       return `+$${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (+${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
     }
 
-    return `${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
+    return `-$${Math.abs(pnlValue).toLocaleString(undefined, { maximumFractionDigits: 2 })} (${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
     
   }, [tokenBalances, pnlValue]);
 
