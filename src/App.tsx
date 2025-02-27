@@ -5,19 +5,10 @@ import { Navigate, Route, Routes, HashRouter } from "react-router-dom";
 
 import { routes } from "@/navigation/routes.tsx";
 // import { useEffect } from "react";
-// import { usePrivy } from "@privy-io/react-auth";
 
 export function App() {
   // const lp = useLaunchParams();
   // const isDark = useSignal(miniApp.isDark);
-
-  // const { linkTelegram } = usePrivy();
-
-  // useEffect(() => {
-  //   if (lp.initDataRaw) {
-  //     linkTelegram({ launchParams: { initDataRaw: lp.initDataRaw } });
-  //   }
-  // }, [linkTelegram, lp.initDataRaw]);
 
   return (
     <>

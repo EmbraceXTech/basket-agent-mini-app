@@ -1,13 +1,12 @@
-import { type FC, useEffect, useMemo, useState } from "react";
+import { type FC, useMemo } from "react";
 import { initData, type User, useSignal } from "@telegram-apps/sdk-react";
-import { Button, List, Placeholder, Text } from "@telegram-apps/telegram-ui";
+import { List, Placeholder } from "@telegram-apps/telegram-ui";
 
 import {
   DisplayData,
   type DisplayDataRow,
 } from "@/components/base/DisplayData/DisplayData";
 import { Page } from "@/components/base/Page";
-import { getAccessToken, useLinkAccount, usePrivy } from "@privy-io/react-auth";
 
 function getUserRows(user: User): DisplayDataRow[] {
   return [
@@ -27,32 +26,6 @@ function getUserRows(user: User): DisplayDataRow[] {
 export const InitDataPage: FC = () => {
   const initDataRaw = useSignal(initData.raw);
   const initDataState = useSignal(initData.state);
-
-  const [token, setToken] = useState<string | null>(null);
-
-  const [linkTelegramError, setLinkTelegramError] = useState<string | null>(
-    null
-  );
-  const [linkTelegramSuccess, setLinkTelegramSuccess] = useState<string | null>(
-    null
-  );
-
-  const { authenticated, user, login, linkTelegram } = usePrivy();
-  const { linkTelegram: linkTelegramPrivy } = useLinkAccount({
-    onSuccess: () => {
-      setLinkTelegramSuccess("Telegram linked successfully");
-    },
-    onError: (error) => {
-      setLinkTelegramError(`Error linking Telegram: ${error}`);
-    },
-  });
-
-  useEffect(() => {
-    getAccessToken().then((token) => {
-      // console.log("token:", token);
-      setToken(token);
-    });
-  }, []);
 
   const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
     if (!initDataState || !initDataRaw) {
@@ -130,25 +103,6 @@ export const InitDataPage: FC = () => {
   }
   return (
     <Page>
-      <Button onClick={() => login({ loginMethods: ["telegram", "email"] })}>
-        Login
-      </Button>
-      <Button onClick={() => linkTelegram({ launchParams: { initDataRaw } })}>
-        Link Telegram
-      </Button>
-      <Button onClick={() => linkTelegramPrivy()}>Link Telegram Privy</Button>
-      {linkTelegramError && <div>{linkTelegramError}</div>}
-      {linkTelegramSuccess && <div>{linkTelegramSuccess}</div>}
-      <div>{authenticated ? "true" : "false"}</div>
-      <div>{user?.telegram?.telegramUserId}</div>
-      <div>{user?.telegram?.username}</div>
-      {authenticated && (
-        <div>
-          <Text>Access Token: {token}</Text>
-          <Text>Telegram ID: {user?.telegram?.telegramUserId}</Text>
-          <Text>Telegram Username: {user?.telegram?.username}</Text>
-        </div>
-      )}
       <List>
         <DisplayData header={"Init Data"} rows={initDataRows} />
         {userRows && <DisplayData header={"User"} rows={userRows} />}

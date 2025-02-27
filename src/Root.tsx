@@ -1,6 +1,5 @@
 import { Toaster } from "react-hot-toast";
 
-import PrivyProvider from "@/core/privy/provider.tsx";
 import { TanstackQueryProvider } from "./core/tanstack-query/provider";
 
 import { App } from "@/App";
@@ -29,14 +28,12 @@ export function Root() {
   return (
     <ErrorBoundary fallback={ErrorBoundaryError}>
       <TanstackQueryProvider>
-        <PrivyProvider>
-          <ParaProviders>
-            <ATHandler>
-              <App />
-              <Toaster />
-            </ATHandler>
-          </ParaProviders>
-        </PrivyProvider>
+        <ParaProviders>
+          <ATHandler>
+            <App />
+            <Toaster />
+          </ATHandler>
+        </ParaProviders>
       </TanstackQueryProvider>
     </ErrorBoundary>
   );
