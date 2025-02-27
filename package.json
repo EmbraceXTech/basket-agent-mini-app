@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@getpara/evm-wallet-connectors": "^1.4.2",
+    "@getpara/react-sdk": "^1.4.2",
     "@heroicons/react": "^2.2.0",
     "@heroui/button": "^2.2.10",
     "@heroui/react": "^2.6.14",
@@ -19,7 +21,7 @@
     "@remixicon/react": "^4.6.0",
     "@tailwindcss/postcss": "^4.0.4",
     "@tailwindcss/vite": "^4.0.4",
-    "@tanstack/react-query": "^5.66.0",
+    "@tanstack/react-query": "^5.66.9",
     "@telegram-apps/sdk-react": "^2.0.20",
     "@telegram-apps/telegram-ui": "^2.1.8",
     "axios": "^1.7.9",
@@ -37,6 +39,7 @@
     "recharts": "^2.15.1",
     "tailwind-variants": "^0.3.1",
     "viem": "^2.23.4",
+    "wagmi": "^2.14.12",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -61,6 +64,7 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
     "vite-plugin-mkcert": "^1.17.6",
+    "vite-plugin-node-polyfills": "^0.23.0",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

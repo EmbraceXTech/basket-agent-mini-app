@@ -11,11 +11,11 @@ export default function Header({
 }) {
   return (
     <div className="flex items-center justify-between relative backdrop-blur-md mb-4">
-      <div className="w-[24px]">
+      <div className="w-[30px]">
         {left ? <Fragment>{left}</Fragment> : null}
       </div>
-      <h1 className="text-lg font-meduim text-center flex-1">{title}</h1>
-      <div className="w-[24px] flex justify-end">
+      <h1 className="text-lg font-meduim text-center">{title}</h1>
+      <div className="w-[30px] flex justify-end">
         {right ? <Fragment>{right}</Fragment> : null}
       </div>
     </div>

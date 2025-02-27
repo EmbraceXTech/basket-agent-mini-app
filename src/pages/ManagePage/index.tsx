@@ -1,6 +1,6 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, Tab, Spinner, Button } from "@heroui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import {
@@ -8,6 +8,7 @@ import {
   Cog6ToothIcon,
   DocumentTextIcon,
   TrashIcon,
+  UserIcon,
   WalletIcon,
 } from "@heroicons/react/24/outline";
 
@@ -23,9 +24,14 @@ import ManageKnowledge from "@/components/manage/Knowledge";
 import ManageSettings from "@/components/manage/Settings";
 import TerminateModal from "@/components/agent/modal/TerminateModal";
 import ManageLogs from "@/components/manage/Logs";
+import ParaModal from "@/core/para/ParaModal";
+import para from "@/core/para/config";
+import walletService from "@/services/wallet.service";
+import { OAuthMethod } from "@getpara/react-sdk";
 
 export default function ManagePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [tab, setTab] = useState("wallet");
   const [isSaving, setIsSaving] = useState(false);
   const {
@@ -93,6 +99,105 @@ export default function ManagePage() {
       }
     );
   };
+
+  // Para Connector ------------------------------------------------------------
+  const [isParaOpen, setIsParaOpen] = useState(false);
+  const [isParaLoading, setIsParaLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  const handleCheckIfAuthenticated = async () => {
+    setIsParaLoading(true);
+    try {
+      const isAuthenticated = await para.isFullyLoggedIn();
+      if (isAuthenticated) {
+        setIsConnected(true);
+      } else {
+        setIsConnected(false);
+      }
+      setIsParaLoading(isAuthenticated);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message || "An error occurred during authentication");
+      } else {
+        toast.error("An unknown error occurred during authentication");
+      }
+    }
+    setIsParaLoading(false);
+  };
+
+  const handleClaimWallet = async () => {
+    if (!id) {
+      toast.error("Agent ID is required");
+      return;
+    }
+
+    if (!isConnected) {
+      toast.error("Please sign in to claim your wallet");
+      return;
+    }
+
+    setIsClaiming(true);
+
+    const isEmail = para.isEmail;
+    const isTelegram = para.isTelegram;
+    const isPhone = para.isPhone;
+
+    const identifier = isEmail
+      ? para.getEmail()
+      : isTelegram
+      ? para.telegramUserId
+      : isPhone
+      ? para.phone
+      : null;
+
+    const identifierType = isEmail
+      ? "EMAIL"
+      : isTelegram
+      ? "TELEGRAM"
+      : isPhone
+      ? "PHONE"
+      : "CUSTOM_ID";
+
+    if (!identifier) {
+      toast.error("No identifier found");
+      setIsParaLoading(false);
+      setIsParaOpen(false);
+      return;
+    }
+
+    try {
+      await walletService.claimWallet(id, {
+        userId: para.getUserId() || "",
+        identifier: identifier,
+        identifierType: identifierType as
+          | OAuthMethod.TWITTER
+          | OAuthMethod.DISCORD
+          | OAuthMethod.TELEGRAM
+          | "EMAIL"
+          | "PHONE"
+          | "CUSTOM_ID",
+      });
+      toast.success("Wallet claimed");
+      setIsParaLoading(false);
+      setIsParaOpen(false);
+      navigate("/");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
+  useEffect(() => {
+    handleCheckIfAuthenticated();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // ------------------------------------------------------------
   if (!id) {
     return (
       <div className="flex-1 flex flex-col space-y-4 items-center justify-center h-full">
@@ -105,18 +210,55 @@ export default function ManagePage() {
       <div className="w-full min-h-screen p-4 pb-6 flex flex-col">
         <Header
           title={agentInfo?.name || "AI Agent Settings"}
-          right={
-            <Button
-              variant="light"
-              onPress={() => setIsTerminateModalOpen(true)}
-              startContent={
-                <TrashIcon
-                  className="w-5 h-5 text-secondary-icon"
-                  strokeWidth={2}
+          left={
+            isConnected ? (
+              <div className="flex gap-1">
+                <Button
+                  onPress={() => setIsParaOpen(true)}
+                  className="px-2 rounded-full"
+                  variant="solid"
+                  color="primary"
+                  startContent={<UserIcon className="w-4 h-4" />}
+                  isIconOnly
                 />
-              }
-              isIconOnly
-            />
+                <Button
+                  isDisabled={isClaiming}
+                  isLoading={isClaiming}
+                  onPress={handleClaimWallet}
+                  className="px-2 rounded-full"
+                  variant="solid"
+                  color="primary"
+                >
+                  Claim
+                </Button>
+              </div>
+            ) : (
+              <Button
+                isDisabled={isParaLoading}
+                isLoading={isParaLoading}
+                onPress={() => setIsParaOpen(true)}
+                className="px-2 rounded-full"
+                variant="solid"
+                color="primary"
+              >
+                Sign in to claim
+              </Button>
+            )
+          }
+          right={
+            <>
+              <Button
+                variant="light"
+                onPress={() => setIsTerminateModalOpen(true)}
+                startContent={
+                  <TrashIcon
+                    className="w-5 h-5 text-secondary-icon"
+                    strokeWidth={2}
+                  />
+                }
+                isIconOnly
+              />
+            </>
           }
         />
         <>
@@ -220,6 +362,13 @@ export default function ManagePage() {
         onClose={() => setIsTerminateModalOpen(false)}
         onOpenChange={() => setIsTerminateModalOpen(!isTerminateModalOpen)}
         agentId={+id}
+      />
+      <ParaModal
+        isOpen={isParaOpen}
+        setIsOpen={(isOpen) => {
+          handleCheckIfAuthenticated();
+          setIsParaOpen(isOpen);
+        }}
       />
     </Page>
   );

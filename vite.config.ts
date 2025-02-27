@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 // import tailwindcss from "@tailwindcss/vite";
 // import mkcert from "vite-plugin-mkcert";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,6 +27,11 @@ export default defineConfig({
     // https://www.npmjs.com/package/vite-plugin-mkcert
     // process.env.HTTPS && mkcert(),
     // tailwindcss(),
+    nodePolyfills({
+      // Whether to polyfill `global`, `process`, and `Buffer`.
+      // By default, all are true.
+      protocolImports: true,
+    }),
   ],
   publicDir: "./public",
   server: {
