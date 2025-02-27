@@ -7,6 +7,8 @@ import {
 import para from "./config";
 import "@getpara/react-sdk/styles.css";
 
+import basketAgentLogo from "/public/basket-agent-logo.png";
+
 export default function ParaModal({
   isOpen,
   setIsOpen,
@@ -20,7 +22,7 @@ export default function ParaModal({
         para={para}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        logo={"/public/basket-agent-logo.svg"}
+        logo={basketAgentLogo}
         theme={{
           foregroundColor: "#FF4F29",
           borderRadius: "full",
