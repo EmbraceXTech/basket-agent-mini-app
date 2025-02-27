@@ -21,11 +21,14 @@ export default function ParaModal({
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         logo={"/public/basket-agent-logo.svg"}
-        theme={{}}
-        oAuthMethods={[
-          OAuthMethod.GOOGLE,
-          OAuthMethod.TELEGRAM,
-        ]}
+        theme={{
+          foregroundColor: "#FF4F29",
+          borderRadius: "full",
+          backgroundColor: "#ffffff",
+          accentColor: "#ffffff",
+          font: "Inter",
+        }}
+        oAuthMethods={[OAuthMethod.GOOGLE, OAuthMethod.TELEGRAM]}
         // authLayout={[AuthLayout.AUTH_FULL, AuthLayout.EXTERNAL_FULL]}
         externalWallets={[]}
         recoverySecretStepEnabled
