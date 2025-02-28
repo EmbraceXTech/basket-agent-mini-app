@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { IAgentInfo } from "@/interfaces/agent";
@@ -10,10 +10,17 @@ import { formatUSD } from "@/utils/format.util";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/solid";
 import TokenPriceChart from "./chart/TokenPriceChart";
 import walletApi from "@/services/wallet.service";
+import toast from "react-hot-toast";
+import { ITokenAvailable } from "@/interfaces/token";
 
 export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
   const navigate = useNavigate();
-  const { data: tokenBalances, isLoading } = useQuery({
+  const [isFaucetLoading, setIsFaucetLoading] = useState(false);
+  const {
+    data: tokenBalances,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["tokenBalances", agentInfo.id],
     queryFn: () =>
       tokenApi.getTokenBalance(agentInfo.id.toString() || "", {
@@ -26,12 +33,15 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
 
   const { data: balanceChartData } = useQuery({
     queryKey: ["balanceChartData", agentInfo.id],
-    queryFn: () =>
-      walletApi.getBalanceChart(agentInfo.id.toString() || ""),
+    queryFn: () => walletApi.getBalanceChart(agentInfo.id.toString() || ""),
   });
 
   const pnlValue = useMemo(() => {
-    if (!tokenBalances || tokenBalances.balance === 0 || tokenBalances.equity === 0) {
+    if (
+      !tokenBalances ||
+      tokenBalances.balance === 0 ||
+      tokenBalances.equity === 0
+    ) {
       return null;
     }
     return tokenBalances.balance - tokenBalances.equity;
@@ -45,15 +55,24 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
     const pnlPercent = tokenBalances.performance * 100;
 
     if (pnlValue === 0) {
-      return `$${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+      return `$${pnlValue.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      })}`;
     }
 
     if (pnlValue > 0) {
-      return `+$${pnlValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} (+${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
+      return `+$${pnlValue.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      })} (+${pnlPercent.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      })}%)`;
     }
 
-    return `-$${Math.abs(pnlValue).toLocaleString(undefined, { maximumFractionDigits: 2 })} (${pnlPercent.toLocaleString(undefined, { maximumFractionDigits: 2 })}%)`;
-    
+    return `-$${Math.abs(pnlValue).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    })} (${pnlPercent.toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    })}%)`;
   }, [tokenBalances, pnlValue]);
 
   const pnlTextColor = useMemo(() => {
@@ -72,6 +91,28 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
       );
     }
 
+    const handleFaucet = (agentId: number, tokenInfo: ITokenAvailable) => {
+      setIsFaucetLoading(true);
+      toast.promise(
+        async () => {
+          try {
+            await tokenApi.faucetToken(agentId.toString(), tokenInfo);
+            refetch();
+          } catch (error) {
+            console.error(error);
+            throw error;
+          } finally {
+            setIsFaucetLoading(false);
+          }
+        },
+        {
+          loading: "Fauceting token...",
+          success: `${tokenInfo.symbol} fauceted successfully`,
+          error: (error) => error.response.data.message,
+        }
+      );
+    };
+
     return (
       <div className="flex flex-col space-y-4">
         {tokenBalances.tokens.map((token, key) => {
@@ -89,12 +130,15 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
               token={token}
               tokenInfo={tokenInfo}
               balanceUsd={tokenValue}
+              handleFaucet={() => handleFaucet(agentInfo.id, tokenInfo)}
+              isFaucetLoading={isFaucetLoading}
             />
           );
         })}
       </div>
     );
-  }, [agentInfo.id, tokenBalances]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agentInfo.id, isFaucetLoading, tokenBalances]);
   return (
     <div>
       {isLoading ? (
@@ -104,9 +148,11 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
       ) : (
         <div>
           <div className="text-center">
-            <div className="text-3xl mb-2">{tokenBalances?.balance
-              ? formatUSD(tokenBalances?.balance ?? 0)
-              : "$0.00"}</div>
+            <div className="text-3xl mb-2">
+              {tokenBalances?.balance
+                ? formatUSD(tokenBalances?.balance ?? 0)
+                : "$0.00"}
+            </div>
             {pnlText && <div className={`${pnlTextColor}`}>{pnlText}</div>}
           </div>
           <div className="h-[150px] w-full mt-6">

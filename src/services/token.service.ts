@@ -83,7 +83,7 @@ const getTokenBalance = async (
       }
     );
     let tokenInfo: ITokenAvailable[] = [];
-    let tokenPrice: ITokenPriceResponse[] = [];
+    const tokenPrice: ITokenPriceResponse[] = [];
     if (response.data.tokens.length === 0) {
       return {
         ...response.data,
@@ -128,13 +128,30 @@ const getTokenBalance = async (
         symbol: token.symbol.toUpperCase(),
       }));
     }
-    return { ...response.data, balanceUsd: response.data.tokenValues, tokenInfo, tokenPrice };
+    return {
+      ...response.data,
+      balanceUsd: response.data.tokenValues,
+      tokenInfo,
+      tokenPrice,
+    };
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
 
-const tokenApi = { getTokenBalance, getTokenAvailable, getTokenPrice };
+const faucetToken = async (agentId: string, tokenInfo: ITokenAvailable) => {
+  const response = await axiosInstance.post(`/agent/${agentId}/wallet/faucet`, {
+    token: tokenInfo.symbol.toLowerCase(),
+  });
+  return response.data;
+};
+
+const tokenApi = {
+  getTokenBalance,
+  getTokenAvailable,
+  getTokenPrice,
+  faucetToken,
+};
 
 export default tokenApi;
