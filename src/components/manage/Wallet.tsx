@@ -156,7 +156,16 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
             {pnlText && <div className={`${pnlTextColor}`}>{pnlText}</div>}
           </div>
           <div className="h-[150px] w-full mt-6">
-            <TokenPriceChart data={balanceChartData} />
+            <TokenPriceChart
+              data={
+                balanceChartData
+                  ? balanceChartData.map((item) => ({
+                      ...item,
+                      balance: Number(item.balance),
+                    }))
+                  : []
+              }
+            />
           </div>
         </div>
       )}

@@ -1,16 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { Button, Spinner, Tab, Tabs } from "@heroui/react";
+import { Button, Input, Spinner, Tab, Tabs } from "@heroui/react";
 
 import agentApi from "@/services/agent.service";
 import tokenApi from "@/services/token.service";
 import useStepperStore from "@/stores/createAgent.store";
 
 import EthereumQRGenerator from "@/components/base/EthereumQRGenerator";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { truncateAddress } from "@/utils/string.util";
+import walletApi from "@/services/wallet.service";
+import toast from "react-hot-toast";
 
 export default function Step6() {
   const { data } = useStepperStore();
+
+  const [tab, setTab] = useState("gasToken");
+  const [usdcTransactionHash, setUsdcTransactionHash] = useState("");
+  const [ethTransactionHash, setEthTransactionHash] = useState("");
+  const [isSavingUSDCDeposit, setIsSavingUSDCDeposit] = useState(false);
+  const [isSavingETHDeposit, setIsSavingETHDeposit] = useState(false);
 
   const { data: agentInfo, isLoading } = useQuery({
     queryKey: ["agent", data.id],
@@ -51,6 +59,36 @@ export default function Step6() {
     };
   }, [tokenBalances]);
 
+  const handleSaveDeposit = async () => {
+    try {
+      if (!agentInfo) {
+        return;
+      }
+
+      if (tab === "gasToken") {
+        setIsSavingETHDeposit(true);
+        await walletApi.saveDeposit(
+          agentInfo.id.toString() || "",
+          ethTransactionHash
+        );
+        toast.success("ETH deposit saved");
+      } else {
+        setIsSavingUSDCDeposit(true);
+        await walletApi.saveDeposit(
+          agentInfo.id.toString() || "",
+          usdcTransactionHash
+        );
+        toast.success("USDC deposit saved");
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to save deposit");
+    }
+
+    setIsSavingETHDeposit(false);
+    setIsSavingUSDCDeposit(false);
+  };
+
   if (isLoading) {
     return (
       <div className="flex-1 flex flex-col space-y-6 justify-center items-center h-full">
@@ -79,6 +117,8 @@ export default function Step6() {
             classNames={{
               tab: "h-fit",
             }}
+            selectedKey={tab}
+            onSelectionChange={(key) => setTab(key as string)}
           >
             <Tab
               key="gasToken"
@@ -181,6 +221,35 @@ export default function Step6() {
                   `${balanceToken.usdcBalance ?? "0.00"} USDC`
                 )}
               </p>
+            </div>
+            <div className="flex flex-col items-center w-full">
+              <Input
+                placeholder={`Enter deposit transaction hash`}
+                className="w-full max-w-md"
+                classNames={{
+                  inputWrapper: "h-12",
+                }}
+                variant="bordered"
+                value={tab === "gasToken" ? ethTransactionHash : usdcTransactionHash}
+                onChange={(e) => {
+                  if (tab === "gasToken") {
+                    setEthTransactionHash(e.target.value);
+                  } else {
+                    setUsdcTransactionHash(e.target.value);
+                  }
+                }}
+                description="Enter the deposit transaction hash to record agent initial balance."
+              />
+              <Button
+                className="w-full max-w-md bt-1"
+                color="primary"
+                variant="bordered"
+                onPress={handleSaveDeposit}
+                isDisabled={tab === "gasToken" ? !ethTransactionHash : !usdcTransactionHash}
+                isLoading={tab === "gasToken" ? isSavingETHDeposit : isSavingUSDCDeposit}
+              >
+                Save
+              </Button>
             </div>
           </div>
         </div>

@@ -45,6 +45,8 @@ export default function AssetPage() {
               tokenInfo={tokenInfo}
               balanceUsd={balanceUsd}
               agentId={Number(id)}
+              isFaucetLoading={false}
+              handleFaucet={() => {}}
             />
           );
         })}

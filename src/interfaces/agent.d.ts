@@ -69,34 +69,7 @@ export interface IWithdrawAssetRequest {
 }
 
 export interface IWithdrawAssetResponse {
-  model: {
-    address_id: string;
-    amount: string;
-    asset: {
-      asset_id: string;
-      contract_address: string;
-      decimals: number;
-      network_id: string;
-    };
-    destination: string;
-    gasless: boolean;
-    network_id: string;
-    transaction: {
-      content: {
-        from: string;
-        to: string;
-      };
-      from_address_id: string;
-      network_id: string;
-      signed_payload: string;
-      status: string;
-      transaction_hash: string;
-      transaction_link: string;
-      unsigned_payload: string;
-    };
-    transfer_id: string;
-    wallet_id: string;
-  };
+  transactionHash: string;
 }
 
 export interface BuyDto {

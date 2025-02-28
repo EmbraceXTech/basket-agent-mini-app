@@ -19,6 +19,7 @@ import { useNumberState } from "@/hooks/useNumberState";
 import { isValidEthereumAddress } from "@/utils/address.util";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import agentApi from "@/services/agent.service";
+import chainApi from "@/services/chain.service";
 
 export default function WithdrawAsset({
   agentInfo,
@@ -62,7 +63,12 @@ export default function WithdrawAsset({
   const { data: tokenPrice, isLoading: isTokenPriceLoading, refetch: refetchTokenPrice } = useQuery({
     queryKey: ["tokenPrices", "USDC", "ETH"],
     queryFn: () => tokenApi.getTokenPrice(["USDC", "ETH"])
-  })
+  });
+
+  const { data: chains } = useQuery({
+    queryKey: ["chain", agentInfo.chainId],
+    queryFn: () => chainApi.getChainAvailable()
+  });
 
   const balanceData = useMemo(() => {
     if (!tokenBalances || isTokenBalancesLoading) {
@@ -114,8 +120,15 @@ export default function WithdrawAsset({
         amount: tab === "stableCoin" ? usdcAmount || 0 : ethAmount || 0,
         recipientAddress: walletAddress,
       });
-      if (result.model.transaction && result.model.transaction.transaction_link) {
-        setTransactionLink(result.model.transaction.transaction_link);
+      if (result.transactionHash) {
+        const chainInfo = chains?.find(chain => chain.chainId === Number(agentInfo.chainId));
+        if (chainInfo) {
+          const explorer = chainInfo.explorers[0];
+          if (explorer) {
+            const transactionLink = `${explorer.url}/tx/${result.transactionHash}`;
+            setTransactionLink(transactionLink);
+          }
+        }
       }
       setIsWithdrawCompleted(true);
       refetchTokenBalances();

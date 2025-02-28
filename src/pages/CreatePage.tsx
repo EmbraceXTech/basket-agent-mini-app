@@ -86,18 +86,12 @@ export default function CreatePage() {
               </Button>
             </div>
           ) : currentStep === totalSteps - 1 ? (
-            <div className="flex flex-col gap-2">
+            <div>
               <Button
-                className="w-full bg-[#D9D9D9] text-white rounded-full font-medium"
-                isDisabled
-              >
-                Minimum initial Deposit: $5
-              </Button>
-              <Button
-                className="w-full bg-secondary-background text-secondary rounded-full font-medium"
+                className="w-full bg-[#FF4F29] text-secondary rounded-full font-medium"
                 onPress={() => navigate("/")}
               >
-                Deposit Later
+                Finish
               </Button>
             </div>
           ) : (
