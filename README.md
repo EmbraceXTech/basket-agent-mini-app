@@ -29,6 +29,13 @@ Join us and start discovering new approaches to trading with Basket Agent on Tel
 2. Run the development server: `npm run dev`
 3. Access the application at `http://localhost:5173`
 
+## Screenshots
+<div align="center">
+<img src="./public/screenshot-1.png" width="200" />
+<img src="./public/screenshot-2.png" width="200" />
+<img src="./public/screenshot-3.png" width="200" />
+</div>
+
 ## Relevant Repositories
 - [Basket Agent API](https://github.com/EmbraceXTech/basket-agent-backend)
 - [Basket Agent Frontend](https://github.com/EmbraceXTech/basket-agent-mini-app)
