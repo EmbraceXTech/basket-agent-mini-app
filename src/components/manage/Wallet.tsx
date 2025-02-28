@@ -100,7 +100,7 @@ export default function Wallet({ agentInfo }: { agentInfo: IAgentInfo }) {
             refetch();
           } catch (error) {
             console.error(error);
-            throw error;
+            throw new Error("Faucet failed");
           } finally {
             setIsFaucetLoading(false);
           }
