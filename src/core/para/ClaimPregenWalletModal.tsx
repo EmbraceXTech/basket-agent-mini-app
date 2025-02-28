@@ -1,4 +1,3 @@
-import agentApi from "@/services/agent.service";
 import {
   Button,
   Modal,
@@ -9,28 +8,26 @@ import {
 } from "@heroui/react";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
-export default function TerminateModal({
+export default function ClaimPregenWalletModal({
   isOpen,
   onClose,
   onOpenChange,
-  agentId,
+  handleClaimWallet,
 }: {
   isOpen: boolean;
   onClose?: () => void;
   onOpenChange: () => void;
-  agentId: number;
+  handleClaimWallet: () => Promise<void>;
 }) {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const handleTerminate = async () => {
+  const handleClaim = async () => {
     setIsLoading(true);
     toast.promise(
       async () => {
         try {
-          await agentApi.terminateAgent(agentId);
-          navigate("/agent");
+          await handleClaimWallet();
         } catch (error) {
           console.error(error);
           throw error;
@@ -40,8 +37,8 @@ export default function TerminateModal({
         }
       },
       {
-        loading: "Terminating agent...",
-        success: "Agent terminated successfully",
+        loading: "Claiming wallet...",
+        success: "Wallet claimed successfully",
         error: (error) => error.response.data.message,
       }
     );
@@ -61,17 +58,18 @@ export default function TerminateModal({
             </ModalHeader>
             <ModalBody>
               <p className="text-center text-secondary-text">
-                You will lose offline access to all your assets and this agent
-                will be deleted.
+                You are about to claim control of the pre-generated wallet. Once
+                claimed, this agent bot will be removed, and you will have full
+                access to the wallet. Do you want to proceed?
               </p>
             </ModalBody>
             <ModalFooter className="flex flex-col">
               <Button
-                color="danger"
+                color="primary"
                 variant="solid"
                 isDisabled={isLoading}
                 isLoading={isLoading}
-                onPress={handleTerminate}
+                onPress={handleClaim}
                 className="w-full rounded-full font-semibold"
               >
                 Yes

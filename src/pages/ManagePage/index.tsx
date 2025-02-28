@@ -7,7 +7,6 @@ import {
   BookOpenIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
-  TrashIcon,
   UserIcon,
   WalletIcon,
 } from "@heroicons/react/24/outline";
@@ -28,6 +27,8 @@ import ParaModal from "@/core/para/ParaModal";
 import para from "@/core/para/config";
 import walletService from "@/services/wallet.service";
 import { OAuthMethod } from "@getpara/react-sdk";
+import ClaimPregenWalletModal from "@/core/para/ClaimPregenWalletModal";
+import { GiftIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 export default function ManagePage() {
   const { id } = useParams();
@@ -105,6 +106,8 @@ export default function ManagePage() {
   const [isParaLoading, setIsParaLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isClaiming, setIsClaiming] = useState(false);
+  const [isClaimPregenWalletModalOpen, setIsClaimPregenWalletModalOpen] =
+    useState(false);
 
   const handleCheckIfAuthenticated = async () => {
     setIsParaLoading(true);
@@ -210,7 +213,7 @@ export default function ManagePage() {
       <div className="w-full min-h-screen p-4 pb-6 flex flex-col">
         <Header
           title={agentInfo?.name || "AI Agent Settings"}
-          left={
+          right={
             isConnected ? (
               <div className="flex gap-1">
                 <Button
@@ -221,16 +224,6 @@ export default function ManagePage() {
                   startContent={<UserIcon className="w-4 h-4" />}
                   isIconOnly
                 />
-                <Button
-                  isDisabled={isClaiming}
-                  isLoading={isClaiming}
-                  onPress={handleClaimWallet}
-                  className="px-2 rounded-full"
-                  variant="solid"
-                  color="primary"
-                >
-                  Claim
-                </Button>
               </div>
             ) : (
               <Button
@@ -241,24 +234,9 @@ export default function ManagePage() {
                 variant="solid"
                 color="primary"
               >
-                Sign in to claim
+                Sign in
               </Button>
             )
-          }
-          right={
-            <>
-              <Button
-                variant="light"
-                onPress={() => setIsTerminateModalOpen(true)}
-                startContent={
-                  <TrashIcon
-                    className="w-5 h-5 text-secondary-icon"
-                    strokeWidth={2}
-                  />
-                }
-                isIconOnly
-              />
-            </>
           }
         />
         <>
@@ -343,18 +321,62 @@ export default function ManagePage() {
         {(tab === "knowledge" || tab === "settings") && (
           <div className="flex-1" />
         )}
-        {(tab === "knowledge" || tab === "settings") && (
+        {tab === "knowledge" && (
           <Button
             className="bg-[#FF4F29] rounded-full text-white p-4 w-full"
             variant="solid"
-            onPress={
-              tab === "knowledge" ? handleSaveKnowledge : handleSaveSettings
-            }
+            onPress={handleSaveKnowledge}
             isLoading={isSaving}
             isDisabled={isSaving}
           >
             Save
           </Button>
+        )}
+        {tab === "settings" && (
+          <div className="flex flex-col gap-2">
+            {isConnected ? (
+              <Button
+                isDisabled={isClaiming}
+                isLoading={isClaiming}
+                onPress={() => setIsClaimPregenWalletModalOpen(true)}
+                className="px-2 rounded-full"
+                variant="bordered"
+                color="primary"
+                startContent={<GiftIcon className="w-4 h-4" />}
+              >
+                Claim
+              </Button>
+            ) : (
+              <Button
+                isDisabled={isParaLoading}
+                isLoading={isParaLoading}
+                onPress={() => setIsParaOpen(true)}
+                className="px-2 rounded-full"
+                variant="bordered"
+                color="primary"
+              >
+                Sign in to claim
+              </Button>
+            )}
+            <Button
+              variant="bordered"
+              onPress={() => setIsTerminateModalOpen(true)}
+              startContent={<TrashIcon className="w-4 h-4" />}
+              className="rounded-full"
+              color="danger"
+            >
+              Kill Agent
+            </Button>
+            <Button
+              className="bg-[#FF4F29] rounded-full text-white p-4 w-full"
+              variant="solid"
+              onPress={handleSaveSettings}
+              isLoading={isSaving}
+              isDisabled={isSaving}
+            >
+              Save
+            </Button>
+          </div>
         )}
       </div>
       <TerminateModal
@@ -362,6 +384,13 @@ export default function ManagePage() {
         onClose={() => setIsTerminateModalOpen(false)}
         onOpenChange={() => setIsTerminateModalOpen(!isTerminateModalOpen)}
         agentId={+id}
+      />
+      <ClaimPregenWalletModal
+        isOpen={isClaimPregenWalletModalOpen}
+        onOpenChange={() =>
+          setIsClaimPregenWalletModalOpen(!isClaimPregenWalletModalOpen)
+        }
+        handleClaimWallet={handleClaimWallet}
       />
       <ParaModal
         isOpen={isParaOpen}
