@@ -296,8 +296,7 @@ export default function ManageSettings({
               {(!simulateResult || simulateResult?.tradeSteps.length === 0) ? "-" : simulateResult?.tradeSteps.map((step, index) => {
                 const tokenInfo = tokenList.find(
                   (token) =>
-                    token.address.toLowerCase() ===
-                    step.data.tokenAddress.toLowerCase()
+                    token?.address?.toLowerCase() === step?.data?.tokenAddress?.toLowerCase()
                 );
 
                 return (
